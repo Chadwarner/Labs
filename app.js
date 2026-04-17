@@ -3,52 +3,52 @@
 /* ── Catalogue data ──────────────────────────────────────────────────── */
 const catalogue = {
   action: [
-    { title: 'Iron Ridge',       year: 2023, emoji: '⚔️' },
-    { title: 'Burning Coast',    year: 2022, emoji: '🔥' },
-    { title: 'Steelborn',        year: 2024, emoji: '🛡️' },
-    { title: 'The Meridian War', year: 2021, emoji: '💣' },
-    { title: 'Blacksite',        year: 2023, emoji: '🚁' },
-    { title: 'Last Strike',      year: 2024, emoji: '🎯' },
+    { title: 'Iron Ridge',       year: 2023, emoji: '⚔️',  colors: ['#8eb8e2', '#0d1e38'] },
+    { title: 'Burning Coast',    year: 2022, emoji: '🔥',  colors: ['#ff6b35', '#6a1000'] },
+    { title: 'Steelborn',        year: 2024, emoji: '🛡️',  colors: ['#5b8ab5', '#0a1828'] },
+    { title: 'The Meridian War', year: 2021, emoji: '💣',  colors: ['#909090', '#0e0c0a'] },
+    { title: 'Blacksite',        year: 2023, emoji: '🚁',  colors: ['#2a8a9a', '#030c0e'] },
+    { title: 'Last Strike',      year: 2024, emoji: '🎯',  colors: ['#e83030', '#280000'] },
   ],
   adventure: [
-    { title: 'The Last Forest',  year: 2024, emoji: '🌲' },
-    { title: 'Drift',            year: 2023, emoji: '🌊' },
-    { title: 'Summit Zero',      year: 2022, emoji: '⛰️' },
-    { title: 'Into the Canyon',  year: 2024, emoji: '🏜️' },
-    { title: 'River Wild',       year: 2021, emoji: '🦅' },
-    { title: 'Wanderpath',       year: 2023, emoji: '🗺️' },
+    { title: 'The Last Forest',  year: 2024, emoji: '🌲',  colors: ['#3a9a3a', '#061406'] },
+    { title: 'Drift',            year: 2023, emoji: '🌊',  colors: ['#1a9ed4', '#031420'] },
+    { title: 'Summit Zero',      year: 2022, emoji: '⛰️',  colors: ['#8ca0b8', '#121820'] },
+    { title: 'Into the Canyon',  year: 2024, emoji: '🏜️',  colors: ['#d4845a', '#2a0e04'] },
+    { title: 'River Wild',       year: 2021, emoji: '🦅',  colors: ['#5aabe0', '#0a1418'] },
+    { title: 'Wanderpath',       year: 2023, emoji: '🗺️',  colors: ['#c4a040', '#160c02'] },
   ],
   drama: [
-    { title: 'Ember',            year: 2023, emoji: '🕯️' },
-    { title: 'The Quiet Hours',  year: 2022, emoji: '🌙' },
-    { title: 'Harvest',          year: 2024, emoji: '🌾' },
-    { title: 'Saltwater',        year: 2021, emoji: '🐚' },
-    { title: 'Crooked Pines',    year: 2023, emoji: '🌲' },
-    { title: 'November Rain',    year: 2024, emoji: '🌧️' },
+    { title: 'Ember',            year: 2023, emoji: '🕯️',  colors: ['#e8a020', '#140800'] },
+    { title: 'The Quiet Hours',  year: 2022, emoji: '🌙',  colors: ['#6070d0', '#04040e'] },
+    { title: 'Harvest',          year: 2024, emoji: '🌾',  colors: ['#d4b038', '#140c00'] },
+    { title: 'Saltwater',        year: 2021, emoji: '🐚',  colors: ['#c09080', '#041414'] },
+    { title: 'Crooked Pines',    year: 2023, emoji: '🌲',  colors: ['#4a8a50', '#060a06'] },
+    { title: 'November Rain',    year: 2024, emoji: '🌧️',  colors: ['#5880b0', '#040810'] },
   ],
   nature: [
-    { title: 'Wild Seasons',     year: 2024, emoji: '🌿' },
-    { title: 'Deep Roots',       year: 2023, emoji: '🌳' },
-    { title: 'Tidepool',         year: 2022, emoji: '🐠' },
-    { title: 'Arctic Light',     year: 2024, emoji: '🧊' },
-    { title: 'The Migration',    year: 2021, emoji: '🦋' },
-    { title: 'Old Growth',       year: 2023, emoji: '🍄' },
+    { title: 'Wild Seasons',     year: 2024, emoji: '🌿',  colors: ['#50c860', '#041004'] },
+    { title: 'Deep Roots',       year: 2023, emoji: '🌳',  colors: ['#3a8840', '#0a0604'] },
+    { title: 'Tidepool',         year: 2022, emoji: '🐠',  colors: ['#ff7a50', '#041520'] },
+    { title: 'Arctic Light',     year: 2024, emoji: '🧊',  colors: ['#80d8f8', '#041018'] },
+    { title: 'The Migration',    year: 2021, emoji: '🦋',  colors: ['#9860d8', '#08040e'] },
+    { title: 'Old Growth',       year: 2023, emoji: '🍄',  colors: ['#c05020', '#080402'] },
   ],
   thriller: [
-    { title: 'Hollow Creek',     year: 2023, emoji: '🌫️' },
-    { title: 'The Unseen',       year: 2022, emoji: '👁️' },
-    { title: 'Deadlock',         year: 2024, emoji: '🔒' },
-    { title: 'Under Glass',      year: 2021, emoji: '🔍' },
-    { title: 'Night Signal',     year: 2023, emoji: '📡' },
-    { title: 'False Witness',    year: 2024, emoji: '🎭' },
+    { title: 'Hollow Creek',     year: 2023, emoji: '🌫️',  colors: ['#8090a8', '#060810'] },
+    { title: 'The Unseen',       year: 2022, emoji: '👁️',  colors: ['#7040b0', '#020006'] },
+    { title: 'Deadlock',         year: 2024, emoji: '🔒',  colors: ['#708090', '#050608'] },
+    { title: 'Under Glass',      year: 2021, emoji: '🔍',  colors: ['#90b8d8', '#030810'] },
+    { title: 'Night Signal',     year: 2023, emoji: '📡',  colors: ['#30e870', '#010602'] },
+    { title: 'False Witness',    year: 2024, emoji: '🎭',  colors: ['#a01828', '#060002'] },
   ],
   comedy: [
-    { title: 'Backyard Chaos',   year: 2024, emoji: '🌻' },
-    { title: 'The Long Weekend', year: 2023, emoji: '🍺' },
-    { title: 'Plot Twist',       year: 2022, emoji: '😂' },
-    { title: 'Odd Couple Out',   year: 2021, emoji: '🎪' },
-    { title: 'Noodle Town',      year: 2024, emoji: '🍜' },
-    { title: 'Friendly Fire',    year: 2023, emoji: '🎯' },
+    { title: 'Backyard Chaos',   year: 2024, emoji: '🌻',  colors: ['#f0c020', '#3a1800'] },
+    { title: 'The Long Weekend', year: 2023, emoji: '🍺',  colors: ['#e08828', '#140800'] },
+    { title: 'Plot Twist',       year: 2022, emoji: '😂',  colors: ['#f0d030', '#201400'] },
+    { title: 'Odd Couple Out',   year: 2021, emoji: '🎪',  colors: ['#d840a8', '#120016'] },
+    { title: 'Noodle Town',      year: 2024, emoji: '🍜',  colors: ['#e05030', '#180400'] },
+    { title: 'Friendly Fire',    year: 2023, emoji: '🎯',  colors: ['#e83030', '#1e0000'] },
   ],
 };
 
@@ -75,6 +75,8 @@ function setupHero() {
 function buildCard(item, genre) {
   const card = document.createElement('div');
   card.className = `card card--${genre}`;
+  card.style.setProperty('--c1', item.colors[0]);
+  card.style.setProperty('--c2', item.colors[1]);
   card.innerHTML = `
     <div class="card__placeholder">
       <span class="card__placeholder-icon">${item.emoji}</span>
@@ -143,7 +145,7 @@ function togglePlay() {
   }
 }
 
-function skipBack()    { progress = Math.max(0, progress - 10);   updateProgress(); }
+function skipBack()    { progress = Math.max(0, progress - 10);    updateProgress(); }
 function skipForward() { progress = Math.min(TOTAL, progress + 30); updateProgress(); }
 
 function updateProgress() {
@@ -183,8 +185,8 @@ function initNavScroll() {
   const nav = document.querySelector('.nav');
   window.addEventListener('scroll', () => {
     nav.style.background = window.scrollY > 40
-      ? 'rgba(26,23,18,.97)'
-      : 'linear-gradient(to bottom, rgba(26,23,18,.95) 0%, transparent 100%)';
+      ? 'rgba(12,10,8,.97)'
+      : 'linear-gradient(to bottom, rgba(12,10,8,.95) 0%, transparent 100%)';
   }, { passive: true });
 }
 
