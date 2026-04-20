@@ -1,1 +1,232 @@
-<h1>coming soon</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miles — History Quiz</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;min-height:100vh}
+.header{background:#1a1a1a;color:white;padding:1rem 1.25rem 1.25rem;border-radius:0 0 16px 16px;margin-bottom:1.25rem}
+.header h1{font-size:18px;font-weight:600}
+.header p{font-size:13px;opacity:.7;margin-top:2px}
+.progress-wrap{height:3px;background:rgba(255,255,255,.2);border-radius:99px;margin-top:10px}
+.progress-bar{height:3px;background:white;border-radius:99px;width:0%;transition:width .3s}
+.container{padding:0 1rem;max-width:520px;margin:0 auto}
+.label{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.topic-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.topic-btn{background:white;border:1.5px solid #e0e0e0;border-radius:12px;padding:.9rem;text-align:left;cursor:pointer;transition:all .15s}
+.topic-btn.sel{border:2px solid var(--c);background:var(--cl)}
+.topic-btn .num{font-size:11px;font-weight:600;color:#999;margin-bottom:4px}
+.topic-btn.sel .num{color:var(--c)}
+.topic-btn .name{font-size:13px;font-weight:500;color:#1a1a1a;line-height:1.3}
+.topic-btn.sel .name{color:var(--c)}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.pill{padding:6px 12px;border-radius:99px;border:1.5px solid #e0e0e0;background:white;font-size:13px;color:#666;cursor:pointer}
+.pill.sel{background:#1D9E75;border-color:#1D9E75;color:white;font-weight:600}
+.btn-primary{width:100%;padding:15px;color:white;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer}
+.btn-outline{width:100%;padding:13px;background:white;border:1.5px solid #e0e0e0;border-radius:12px;font-size:15px;font-weight:500;color:#1a1a1a;cursor:pointer}
+.q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.q-counter{font-size:13px;color:#888;font-weight:500}
+.q-badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px}
+.q-card{background:white;border-radius:12px;padding:1.1rem 1.25rem;margin-bottom:12px;border-left:4px solid var(--c)}
+.q-text{font-size:16px;font-weight:500;line-height:1.55;color:#1a1a1a}
+.hint-card{background:#FFF8E6;border-radius:10px;padding:.8rem 1rem;margin-bottom:12px;border-left:3px solid #EF9F27}
+.hint-label{font-size:11px;font-weight:700;color:#633806;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.hint-text{font-size:13px;color:#412402;line-height:1.5}
+.show-btn{width:100%;padding:13px;background:white;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;margin-bottom:12px}
+.answer-card{background:white;border-radius:12px;padding:1.1rem 1.25rem;margin-bottom:12px;border:1.5px solid #c0dd97;display:none}
+.ans-label{font-size:11px;font-weight:700;color:#1D9E75;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.para-title{font-size:13px;font-weight:600;margin-bottom:3px;margin-top:10px}
+.para-text{font-size:14px;color:#1a1a1a;line-height:1.6}
+.exam-tip{margin-top:10px;padding:.7rem .9rem;background:#EAF3DE;border-radius:8px;border-left:3px solid #1D9E75;font-size:13px;color:#27500A;line-height:1.5}
+.verdict-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;display:none}
+.got-btn{padding:13px;background:#EAF3DE;border:none;border-radius:12px;font-size:15px;font-weight:600;color:#27500A;cursor:pointer}
+.miss-btn{padding:13px;background:#FCEBEB;border:none;border-radius:12px;font-size:15px;font-weight:600;color:#501313;cursor:pointer}
+.next-btn{width:100%;padding:14px;color:white;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;display:none}
+.score-hero{text-align:center;padding:1.5rem 0 1.25rem}
+.score-pct{font-size:72px;font-weight:700;line-height:1}
+.score-msg{font-size:16px;color:#888;margin-top:6px}
+.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.score-tile{background:#f5f5f3;border-radius:10px;padding:.9rem 1rem}
+.score-tile .s-label{font-size:12px;color:#888;margin-bottom:2px}
+.score-tile .s-val{font-size:28px;font-weight:700;color:#1a1a1a}
+.btn-row{display:flex;gap:10px}
+.btn-row .btn-primary,.btn-row .btn-outline{flex:1}
+.screen{display:none}.screen.active{display:block}
+.back-btn{background:rgba(255,255,255,.2);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:none;margin-right:8px;vertical-align:middle}
+.back-btn.vis{display:inline-flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+<div class="header">
+  <div style="display:flex;align-items:center">
+    <button class="back-btn" id="backBtn" onclick="goHome()">&#8592;</button>
+    <div><h1 id="headerTitle">History Quiz</h1><p id="headerSub">Weimar &amp; Nazi Germany — GCSE Paper 3</p></div>
+  </div>
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+</div>
+
+<div class="container">
+  <div class="screen active" id="homeScreen">
+    <div class="label">Pick a topic</div>
+    <div class="topic-grid" id="topicGrid"></div>
+    <div class="label">Question type</div>
+    <div class="pills" id="pillsRow"></div>
+    <button class="btn-primary" id="startBtn" onclick="startQuiz()">Start quiz →</button>
+  </div>
+
+  <div class="screen" id="quizScreen">
+    <div class="q-meta">
+      <span class="q-counter" id="qCounter">Q1 of 6</span>
+      <span class="q-badge" id="qBadge">4 marks</span>
+    </div>
+    <div class="q-card" id="qCard"><div class="q-text" id="qText"></div></div>
+    <div class="hint-card"><div class="hint-label">Structure reminder</div><div class="hint-text" id="qHint"></div></div>
+    <button class="show-btn" id="showBtn" onclick="showAnswer()">Show model answer</button>
+    <div class="answer-card" id="ansCard"></div>
+    <div class="verdict-row" id="verdictRow">
+      <button class="got-btn" onclick="recordVerdict(true)">✓ Got it</button>
+      <button class="miss-btn" onclick="recordVerdict(false)">✗ Missed it</button>
+    </div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next →</button>
+  </div>
+
+  <div class="screen" id="scoreScreen">
+    <div class="score-hero">
+      <div class="score-pct" id="scorePct" style="color:#185FA5">0%</div>
+      <div class="score-msg" id="scoreMsg"></div>
+    </div>
+    <div class="score-grid">
+      <div class="score-tile"><div class="s-label">Got it</div><div class="s-val" id="scGot" style="color:#27500A">0</div></div>
+      <div class="score-tile"><div class="s-label">Missed</div><div class="s-val" id="scMiss" style="color:#A32D2D">0</div></div>
+      <div class="score-tile"><div class="s-label">Total</div><div class="s-val" id="scTotal">0</div></div>
+      <div class="score-tile"><div class="s-label">Topic</div><div class="s-val" id="scTopic" style="font-size:14px;padding-top:4px;font-weight:500"></div></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" id="replayBtn" onclick="startQuiz()">Try again</button>
+      <button class="btn-outline" onclick="goHome()">Change topic</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const COLORS=["#185FA5","#993C1D","#3B6D11","#6D2E46"];
+const LIGHTS=["#E6F1FB","#FAECE7","#EAF3DE","#FBEAF0"];
+const HINTS={inference:"TWO inferences from the source. Each needs evidence. Start: 'One thing I can infer is... I know this because from the source I can see...' No own knowledge.",explain:"3 × PEE paragraphs. Point → Evidence (DEPPS: Date, Event, Person, Place, Stat) → Explanation. No intro or conclusion.",useful:"MOPU × both sources. Meaning (infer) → Own knowledge (DEPPS) → Provenance (why made?) → Usefulness judgement.",diff:"State the clear difference. Support each side with a quote from the relevant interpretation.",essay:"Plan 3–5 mins. Para 1: agree. Para 2: challenge + own knowledge. Conclusion: clear justified judgement. SPaG = 4 marks."};
+const TOPICS=[{name:"Weimar Republic 1918–29",short:"Weimar",questions:[{type:"inference",marks:4,q:"Study a source showing German soldiers returning from WW1 looking defeated, with crowds booing them. What can you infer from this source about attitudes in Germany after WW1?",answer:[{l:"Inference 1",t:"One thing I can infer is that many Germans were in shock and disbelief at the defeat. Soldiers returning looking defeated suggests the public had expected victory and were completely unprepared for surrender."},{l:"Inference 2",t:"Another inference is that anger was directed at the government — booing crowds suggest people were looking for someone to blame, feeding directly into the Dolchstoss (stab-in-the-back) myth."}],tip:"Don't just describe what you see — say what it MEANS about attitudes."},{type:"explain",marks:12,q:"Explain why the Weimar Republic faced so many problems in the years 1919–23.",answer:[{l:"Para 1 — Treaty of Versailles",t:"One reason was the Treaty of Versailles (1919). Germany had to pay £6.6 billion in reparations, accept the War Guilt Clause, reduce its army to 100,000 men and lose territory including Alsace-Lorraine. Politicians who signed it were called 'November Criminals' — making it impossible to build public trust."},{l:"Para 2 — Uprisings",t:"A further reason was violent challenges from left and right. In January 1919 Rosa Luxemburg led the Spartacist Uprising. In March 1920 Wolfgang Kapp seized Berlin. Both failed but showed the Republic had almost no loyal support."},{l:"Para 3 — Hyperinflation",t:"Finally, the 1923 hyperinflation crisis destroyed confidence. France occupied the Ruhr in January 1923; the government printed money to pay striking workers — causing prices to spiral. People with savings lost everything overnight."}],tip:"Each paragraph needs a DEPPS fact. Specific evidence is what gets marks."},{type:"useful",marks:8,q:"How useful is Source A (a 1924 US newspaper praising the Dawes Plan as 'a fair solution to Germany's debt crisis') for a historian studying Germany's recovery under Stresemann?",answer:[{l:"Meaning",t:"The source is quite useful as I can infer that the Dawes Plan was seen internationally as positive — 'fair' suggests foreign powers believed Germany was genuinely improving."},{l:"Own knowledge",t:"The Dawes Plan (August 1924) arranged US loans of 800 million marks and restructured reparations. This led to real recovery — unemployment fell and production rose."},{l:"Provenance",t:"However, it's a US newspaper. American journalists had an interest in presenting US-brokered solutions positively — it may overstate how 'fair' the deal was for Germany."},{l:"Usefulness",t:"Therefore the source is quite useful for showing international perception of recovery, but less useful for understanding how ordinary Germans experienced it."}],tip:"Always end with a clear judgement: 'Therefore the source is partly/quite/very useful because...'"},{type:"diff",marks:4,q:"Interpretation 1: Weimar's problems were mainly caused by the Treaty of Versailles. Interpretation 2: They were mainly caused by internal political weakness. What is the main difference?",answer:[{l:"The difference",t:"Interpretation 1 focuses on an external cause — the punishing Allied terms. Interpretation 2 focuses on internal failings — the weak constitution and unstable coalition governments."},{l:"Support",t:"Interpretation 1 argues the 'reparations burden made stable government impossible'. Interpretation 2 argues 'proportional representation meant no party could govern effectively'."}],tip:"Just state the difference — don't argue which is more convincing. That's for the 16-marker."},{type:"essay",marks:20,q:"'The Weimar Republic's recovery under Stresemann (1924–29) was built on very fragile foundations.' How far do you agree?",answer:[{l:"Para 1 — Agree: fragile",t:"I largely agree. Germany's revival depended entirely on US loans (Dawes Plan, 1924). When Wall Street crashed in October 1929, loans were recalled and unemployment hit 6 million. A recovery that unravels within months of one external shock was never truly stable."},{l:"Para 2 — Challenge: real gains",t:"However, real improvements existed. The Rentenmark (1923) ended hyperinflation. Germany joined the League of Nations in 1926. Average wages rose and 2 million new homes were built (1924–31). For millions, the mid-1920s felt like genuine progress."},{l:"Conclusion",t:"Overall I mostly agree — the recovery was real but structurally weak. The speed of collapse after 1929 confirms the foundations were fragile. Stresemann himself reportedly said Germany was 'dancing on a volcano'."}],tip:"Argue both sides, then give a clear justified judgement. 'I mostly agree because...' beats sitting on the fence."}]},{name:"Rise of the Nazis 1920–33",short:"Nazi Rise",questions:[{type:"inference",marks:4,q:"Study a 1932 Nazi poster showing desperate workers with the slogan 'Hitler — Our Last Hope'. What can you infer about why people supported the Nazis?",answer:[{l:"Inference 1",t:"One thing I can infer is that the Nazis deliberately targeted people who felt abandoned by mainstream politics. 'Our last hope' suggests voters had lost faith in all other parties."},{l:"Inference 2",t:"Another inference is that Nazi propaganda focused on working-class desperation. The desperate workers show the Nazis understood their audience and tailored their message to those hit hardest by unemployment."}],tip:"Say what you can INFER — the deeper meaning — not just what the source shows."},{type:"explain",marks:12,q:"Explain why the Munich Beer Hall Putsch (1923) was important for the future of the Nazi Party.",answer:[{l:"Para 1 — National publicity",t:"One reason was that the trial gave Hitler national publicity. Although the Putsch failed on 9 November 1923, his trial in February 1924 was covered by newspapers across Germany — turning him from a local agitator into a national figure."},{l:"Para 2 — Changed strategy",t:"A further reason was that failure taught Hitler a crucial lesson: violence wouldn't work. He decided to use legal, democratic means to gain power — winning elections rather than coups."},{l:"Para 3 — Mein Kampf",t:"Finally, during 9 months in Landsberg Prison, Hitler wrote Mein Kampf, laying out his ideology including extreme antisemitism. This gave the Nazi movement a clear foundation and spread Hitler's ideas nationally."}],tip:"The Putsch FAILED — but the examiner wants you to explain why the failure was still important."},{type:"explain",marks:12,q:"Explain why support for the Nazi Party increased so rapidly in the years 1929–32.",answer:[{l:"Para 1 — Wall Street Crash",t:"One reason was the Wall Street Crash (October 1929). American banks recalled loans, businesses collapsed, and unemployment reached 6 million by 1932. The Nazis surged from 12 seats (1928) to 107 (1930) and 230 (July 1932)."},{l:"Para 2 — Propaganda",t:"A further reason was Goebbels' highly effective propaganda. Mass rallies, 120 Nazi newspapers, posters and radio spread the message nationally. Simple scapegoating of Jews and communists gave desperate people an explanation for their suffering."},{l:"Para 3 — Fear of communism",t:"Finally, fear of communist revolution drove the middle classes and big business to the Nazis. Businessmen like Thyssen and Krupp funded Hitler to protect their interests."}],tip:"Show three genuinely different reasons. Don't write the same point three times."},{type:"useful",marks:8,q:"How useful is Source B (a 1933 speech by Papen claiming he could 'control Hitler' in a coalition) for a historian studying how Hitler became Chancellor?",answer:[{l:"Meaning",t:"Source B is partly useful as I can infer that Papen catastrophically misjudged Hitler — showing how conservatives underestimated the Nazi leader, directly explaining how Hitler was appointed."},{l:"Own knowledge",t:"Papen persuaded Hindenburg to appoint Hitler on 30 January 1933, believing only 3 Nazis in the Cabinet meant Hitler could be managed. Within 18 months Hitler had total power."},{l:"Provenance",t:"However, Papen gave this speech publicly to justify his own decisions. As Vice-Chancellor he had a personal interest in appearing in control."},{l:"Usefulness",t:"Therefore Source B is quite useful for understanding the political miscalculation that brought Hitler to power — but treat Papen's self-justification with caution."}],tip:"Provenance — who made it, why, when — is often what separates a 6 from a full 8."},{type:"essay",marks:20,q:"'Hitler became Chancellor in January 1933 mainly because of the Wall Street Crash.' How far do you agree?",answer:[{l:"Para 1 — Agree",t:"I largely agree. Before 1929 the Nazis had just 12 seats. After the Crash, unemployment hit 6 million and the Nazis won 230 seats (July 1932). The economic catastrophe gave them mass support they could never have built during Stresemann's stable years."},{l:"Para 2 — Challenge",t:"However, mass support alone didn't make Hitler Chancellor. The Nazi vote was falling by November 1932 (down to 196 seats). Hitler became Chancellor because Papen convinced Hindenburg on 30 January 1933 that a Hitler coalition could be controlled — a catastrophic miscalculation."},{l:"Conclusion",t:"Overall I mostly agree — without the Crash the Nazis would have remained a fringe party. But political miscalculation by Papen and Hindenburg was what actually placed Hitler in power. Both factors were necessary."}],tip:"'Both were necessary but X was more fundamental because...' is a strong approach."}]},{name:"Nazi Control 1933–39",short:"Nazi Control",questions:[{type:"inference",marks:4,q:"Study a 1934 Nuremberg rally photograph showing thousands of soldiers in perfect formation with huge swastika banners. What can you infer about how the Nazis used propaganda?",answer:[{l:"Inference 1",t:"One thing I can infer is that the Nazis used spectacle and military precision to project an image of overwhelming power. Thousands in perfect formation suggests the event was staged to intimidate opponents."},{l:"Inference 2",t:"Another inference is that the Nazis wanted to create emotional loyalty. Huge swastika banners suggest participants were meant to feel part of something historic — inspiring personal devotion to Hitler."}],tip:"Think about PURPOSE — why was this image created? What was it designed to make people feel?"},{type:"explain",marks:12,q:"Explain why the Enabling Act (March 1933) was so important in establishing Nazi control over Germany.",answer:[{l:"Para 1 — What it did",t:"One reason was the sweeping powers it granted. Passed 23–24 March 1933, the Enabling Act gave Hitler power to make laws without the Reichstag for four years — effectively ending the Weimar Constitution."},{l:"Para 2 — How it passed",t:"A further reason was how revealing the passage was. 4,000+ Communists were jailed after the Reichstag Fire (27 Feb 1933) and couldn't vote against it. The Centre Party backed it after Hitler promised to respect the Church."},{l:"Para 3 — What it triggered",t:"Finally, the Act triggered Gleichschaltung. Within months: trade unions banned (2 May), all parties dissolved (14 July), state parliaments abolished (January 1934). All made legally possible by the Enabling Act."}],tip:"Don't just explain what the Act was — explain what it made possible afterwards."},{type:"explain",marks:12,q:"Explain why the Night of the Long Knives (June 1934) was a turning point in Hitler's control of Germany.",answer:[{l:"Para 1 — The SA threat",t:"One reason was the threat from the SA. With 3 million members under Ernst Röhm, the SA wanted to merge with the army. Army generals were furious and threatened Hitler's vital military support."},{l:"Para 2 — What happened",t:"On 30 June 1934, Röhm and SA leaders were shot by the SS. Wider rivals were also killed including former Chancellor Schleicher and Gregor Strasser. Around 400 died. A new law on 3 July declared the killings 'legal'."},{l:"Para 3 — Impact",t:"Power shifted permanently from the SA to the SS, army loyalty was secured, and it established that Hitler would use lethal force against anyone who threatened him. When Hindenburg died in August 1934, the army swore personal allegiance to Hitler."}],tip:"'Turning point' questions need you to show what CHANGED and why that change mattered."},{type:"useful",marks:8,q:"How useful is Source C (a 1935 Goebbels speech claiming 'the German people have never been so united') for studying how the Nazis controlled Germany?",answer:[{l:"Meaning",t:"Source C is partly useful as I can infer the regime was projecting an image of total unity — suggesting they felt the need to counter doubts about their popularity."},{l:"Own knowledge",t:"By 1935 all other parties were banned, newspapers and radio were under Nazi control, and the Gestapo suppressed opposition. Many Germans privately opposed the regime."},{l:"Provenance",t:"However, Goebbels was the Minister of Propaganda — his job was to create the impression of unity. This makes the source useful as propaganda but unreliable as evidence of what Germans actually felt."},{l:"Usefulness",t:"Therefore Source C is quite useful for understanding Nazi propaganda techniques — but tells us almost nothing about the reality of popular opinion."}],tip:"A source can be useful even if biased — it tells us about the intentions of its creator."},{type:"essay",marks:20,q:"'Terror and fear were the main methods the Nazis used to control Germany in 1933–39.' How far do you agree?",answer:[{l:"Para 1 — Agree: terror",t:"I partly agree that terror was central. The Gestapo could arrest without trial — 160,000 held for political offences by 1939. The SS grew to 250,000 members. The Night of the Long Knives showed even senior Nazis weren't safe. The Gestapo relied on ordinary Germans informing on neighbours — creating self-censorship far beyond what secret police could monitor."},{l:"Para 2 — Challenge: propaganda",t:"However, terror alone can't explain control. 70% of families owned a radio by 1939 and willingly listened. Nuremberg rallies attracted true believers. Many Germans, especially the young, genuinely admired Hitler. The KdF programme built real goodwill."},{l:"Conclusion",t:"Overall, both methods were essential and worked together. Terror set a baseline of fear while propaganda built genuine loyalty. The combination — where most Germans either believed or were too afraid to say otherwise — made Nazi control so effective."}],tip:"The strongest essays show how the two methods reinforced each other."}]},{name:"Life in Nazi Germany 1933–39",short:"Nazi Life",questions:[{type:"inference",marks:4,q:"Study a 1935 Nazi poster showing a healthy blonde woman with three children captioned 'The German mother — backbone of our nation'. What can you infer about Nazi attitudes towards women?",answer:[{l:"Inference 1",t:"One thing I can infer is that the Nazis valued women primarily as mothers rather than individuals with independent lives. 'Backbone of our nation' defines the woman's worth entirely through motherhood."},{l:"Inference 2",t:"Another inference is that the Nazis promoted a specific racial ideal. The 'healthy blonde' image reflects the Aryan ideal — suggesting a woman's appearance was considered a public matter tied to national strength."}],tip:"Think about what values the poster is trying to SELL — not just what it literally shows."},{type:"explain",marks:12,q:"Explain why the Nazis persecuted Jewish people in the years 1933–39.",answer:[{l:"Para 1 — Core ideology",t:"One reason was that antisemitism was central to Nazi ideology from the start. The 25-Point Programme (1920) blamed Jewish people for communism, capitalism and Germany's WW1 defeat. Persecution was built into the regime's DNA from day one."},{l:"Para 2 — Scapegoating",t:"A further reason was the political usefulness of blaming Jews. Goebbels made Jewish people the cause of unemployment and economic collapse. The boycott of Jewish shops (April 1933) and exclusion from government jobs (May 1933) gave desperate Germans a visible target."},{l:"Para 3 — Legal escalation",t:"Finally, the Nuremberg Laws (September 1935) gave persecution the force of law — Jews lost citizenship and the right to vote. This culminated in Kristallnacht (9–10 November 1938): 200,000 Jews sent to camps, 7,500 businesses destroyed."}],tip:"Show the ESCALATION — persecution got systematically worse over time."},{type:"explain",marks:12,q:"Explain why Hitler introduced policies to control young people in Nazi Germany.",answer:[{l:"Para 1 — Future roles",t:"One reason was to shape young people for their future roles. Boys in the Hitler Youth were physically trained for military service — 15% of school time was PE. Girls in the League of German Maidens were prepared for motherhood."},{l:"Para 2 — Indoctrination",t:"A further reason was ideological control. Textbooks were rewritten to promote racial purity; teachers swore loyalty oaths and joined the Nazi Teachers' League (97% by 1937); all lessons began and ended with 'Heil Hitler'."},{l:"Para 3 — Removing rival loyalties",t:"Finally, Hitler wanted to replace loyalty to family and church with loyalty to him personally. The Hitler Youth (compulsory from 1936) banned all other youth groups. The oath pledged loyalty to Hitler above all else."}],tip:"'Why' needs REASONS not descriptions. Explain the purpose behind what Hitler did."},{type:"useful",marks:8,q:"How useful is Source D (a 1938 Nazi government report claiming unemployment has been 'eliminated') for studying living standards in Nazi Germany?",answer:[{l:"Meaning",t:"Source D is partly useful as I can infer the regime wanted to present its economic policies as a complete success — 'eliminated' suggests they were making strong public claims about full employment."},{l:"Own knowledge",t:"Unemployment did fall from 6 million (1932) to under 1 million by 1939. However, figures excluded Jews dismissed from jobs, women forced out, men in the Labour Service and political prisoners in camps."},{l:"Provenance",t:"The source is a Nazi government report — produced by the regime to justify its own policies. It has every reason to present the most positive picture and conceal 'invisible unemployment'."},{l:"Usefulness",t:"Therefore Source D is quite useful for understanding Nazi propaganda around employment — but unreliable as an accurate measure of actual living standards."}],tip:"Government sources are almost always useful for showing what the regime WANTED people to believe."},{type:"essay",marks:20,q:"'Life improved for most Germans under Nazi rule in the 1930s.' How far do you agree?",answer:[{l:"Para 1 — Agree: improvements",t:"I partially agree that life improved for many. Unemployment fell from 6 million (1932) to under 1 million by 1939. Average weekly wages rose from 86 marks (1932) to 109 marks (1938). The KdF programme provided affordable concerts, sport and holidays — 10 million took KdF holidays in 1939."},{l:"Para 2 — Challenge: illusion and cost",t:"However, the improvements were built on manipulation. Unemployment figures excluded Jewish workers, women forced out, Labour Service men and camp prisoners. Trade unions were banned on 2 May 1933. Working hours rose to 47 per week by 1939. The Volkswagen scheme was a fraud. For Jewish Germans and minorities this period brought escalating persecution culminating in Kristallnacht (1938)."},{l:"Conclusion",t:"Overall I mostly disagree. While real improvements occurred for some, the gains were built on statistical manipulation, suppressed workers' rights, and systematic persecution of minorities. The interpretation is too broad and ignores too many people."}],tip:"Take a clear position AND explain the limits of both sides. 'Mostly agree/disagree because...' beats 'both sides have a point'."}]}];
+
+let selTopic=0,selQType="all",queue=[],idx=0,gotCount=0,missCount=0,ansShown=false,verdictDone=false;
+
+function setColor(c,cl){document.documentElement.style.setProperty("--c",c);document.documentElement.style.setProperty("--cl",cl);}
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");}
+
+function buildHome(){
+  const tg=document.getElementById("topicGrid");
+  tg.innerHTML=TOPICS.map((t,i)=>`<button class="topic-btn${selTopic===i?" sel":""}" onclick="selTopicFn(${i})" style="--c:${COLORS[i]};--cl:${LIGHTS[i]}"><div class="num">Topic ${i+1}</div><div class="name">${t.short}</div></button>`).join("");
+  const pr=document.getElementById("pillsRow");
+  const types=[["all","All types"],["inference","Inference (4m)"],["explain","Explain why (12m)"],["useful","How useful? (8m)"],["diff","Interpretations (4m)"],["essay","16-mark essay"]];
+  pr.innerHTML=types.map(([k,v])=>`<button class="pill${selQType===k?" sel":""}" onclick="selQTypeFn('${k}')">${v}</button>`).join("");
+  document.getElementById("startBtn").style.background=COLORS[selTopic];
+}
+
+function selTopicFn(i){selTopic=i;buildHome();}
+function selQTypeFn(qt){selQType=qt;buildHome();}
+
+function startQuiz(){
+  let pool=TOPICS[selTopic].questions;
+  if(selQType!=="all")pool=pool.filter(q=>q.type===selQType);
+  if(!pool.length)return;
+  queue=shuffle(pool);idx=0;gotCount=0;missCount=0;ansShown=false;verdictDone=false;
+  setColor(COLORS[selTopic],LIGHTS[selTopic]);
+  document.getElementById("headerTitle").textContent=TOPICS[selTopic].short;
+  document.getElementById("backBtn").classList.add("vis");
+  document.getElementById("replayBtn").style.background=COLORS[selTopic];
+  showScreen("quizScreen");
+  renderQ();
+}
+
+function renderQ(){
+  ansShown=false;verdictDone=false;
+  const q=queue[idx];const total=queue.length;
+  document.getElementById("progressBar").style.width=Math.round((idx/total)*100)+"%";
+  document.getElementById("qCounter").textContent="Q"+(idx+1)+" of "+total;
+  document.getElementById("headerSub").textContent="Q"+(idx+1)+" of "+total;
+  document.getElementById("qBadge").textContent=q.marks+" marks";
+  document.getElementById("qBadge").style.background=LIGHTS[selTopic];
+  document.getElementById("qBadge").style.color=COLORS[selTopic];
+  document.getElementById("qText").textContent=q.q;
+  document.getElementById("qCard").style.borderLeftColor=COLORS[selTopic];
+  document.getElementById("qHint").textContent=HINTS[q.type];
+  document.getElementById("showBtn").style.display="block";
+  document.getElementById("showBtn").style.borderColor=COLORS[selTopic];
+  document.getElementById("showBtn").style.color=COLORS[selTopic];
+  document.getElementById("ansCard").style.display="none";
+  document.getElementById("ansCard").innerHTML="";
+  document.getElementById("verdictRow").style.display="none";
+  document.getElementById("nextBtn").style.display="none";
+  window.scrollTo(0,0);
+}
+
+function showAnswer(){
+  if(ansShown)return;ansShown=true;
+  const q=queue[idx];
+  const card=document.getElementById("ansCard");
+  let html='<div class="ans-label">Model answer</div>';
+  q.answer.forEach(p=>{
+    if(p.l)html+=`<div class="para-title" style="color:${COLORS[selTopic]}">${p.l}</div>`;
+    html+=`<div class="para-text">${p.t}</div>`;
+  });
+  if(q.tip)html+=`<div class="exam-tip"><strong>Exam tip:</strong> ${q.tip}</div>`;
+  card.innerHTML=html;card.style.display="block";
+  document.getElementById("showBtn").style.display="none";
+  document.getElementById("verdictRow").style.display="grid";
+}
+
+function recordVerdict(got){
+  if(got)gotCount++;else missCount++;
+  verdictDone=true;
+  document.getElementById("verdictRow").style.display="none";
+  const nb=document.getElementById("nextBtn");
+  nb.style.display="block";
+  nb.style.background=COLORS[selTopic];
+  nb.textContent=idx+1<queue.length?"Next question →":"See my results";
+}
+
+function nextQuestion(){
+  idx++;
+  if(idx>=queue.length){showScore();return;}
+  renderQ();
+}
+
+function showScore(){
+  const total=queue.length;
+  const pct=Math.round((gotCount/total)*100);
+  document.getElementById("scorePct").textContent=pct+"%";
+  document.getElementById("scorePct").style.color=COLORS[selTopic];
+  const msgs=[[85,"Excellent. Miles is ready."],[70,"Solid. You know this topic well."],[50,"Decent effort. Focus on the ones you missed."],[0,"Keep going — read the guides and try again."]];
+  document.getElementById("scoreMsg").textContent=msgs.find(m=>pct>=m[0])[1];
+  document.getElementById("scGot").textContent=gotCount;
+  document.getElementById("scMiss").textContent=missCount;
+  document.getElementById("scTotal").textContent=total;
+  document.getElementById("scTopic").textContent=TOPICS[selTopic].short;
+  document.getElementById("progressBar").style.width="100%";
+  document.getElementById("headerSub").textContent="Results";
+  showScreen("scoreScreen");
+}
+
+function goHome(){
+  document.getElementById("backBtn").classList.remove("vis");
+  document.getElementById("headerTitle").textContent="History Quiz";
+  document.getElementById("headerSub").textContent="Weimar & Nazi Germany — GCSE Paper 3";
+  document.getElementById("progressBar").style.width="0%";
+  setColor("#185FA5","#E6F1FB");
+  showScreen("homeScreen");
+  buildHome();
+}
+
+buildHome();
+</script>
+</body>
+</html>
