@@ -1,0 +1,72 @@
+
+<style>
+  .countdown-wrap { padding: 2rem 0; text-align: center; }
+  .name { font-size: 13px; color: var(--color-text-secondary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .age-display { font-size: 72px; font-weight: 500; color: var(--color-text-primary); line-height: 1; margin-bottom: 0.25rem; }
+  .age-label { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 2rem; }
+  .tiles { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem; }
+  .tile { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; min-width: 100px; }
+  .tile-num { font-size: 32px; font-weight: 500; color: var(--color-text-primary); }
+  .tile-label { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; }
+  .next-bday { font-size: 13px; color: var(--color-text-secondary); margin-top: 0.5rem; }
+  .bar-wrap { background: var(--color-background-secondary); border-radius: 4px; height: 6px; width: 240px; margin: 0 auto 0.5rem; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--color-text-primary); border-radius: 4px; transition: width 1s; }
+</style>
+<div class="countdown-wrap">
+  <h2 class="sr-only">Countdown to Piers' next birthday</h2>
+  <p class="name">Piers</p>
+  <div class="age-display" id="age">—</div>
+  <div class="age-label">years old</div>
+  <div class="tiles">
+    <div class="tile"><div class="tile-num" id="d-days">—</div><div class="tile-label">days</div></div>
+    <div class="tile"><div class="tile-num" id="d-hours">—</div><div class="tile-label">hours</div></div>
+    <div class="tile"><div class="tile-num" id="d-mins">—</div><div class="tile-label">minutes</div></div>
+    <div class="tile"><div class="tile-num" id="d-secs">—</div><div class="tile-label">seconds</div></div>
+  </div>
+  <div class="bar-wrap"><div class="bar-fill" id="year-bar"></div></div>
+  <p class="next-bday" id="next-bday-label"></p>
+</div>
+<script>
+  const bday = new Date(1993, 1, 1);
+
+  function getAge(now) {
+    let years = now.getFullYear() - bday.getFullYear();
+    const hasBirthdayPassed = now >= new Date(now.getFullYear(), 1, 1);
+    if (!hasBirthdayPassed) years--;
+    return years;
+  }
+
+  function getNextBirthday(now) {
+    let next = new Date(now.getFullYear(), 1, 1);
+    if (now >= next) next = new Date(now.getFullYear() + 1, 1, 1);
+    return next;
+  }
+
+  function tick() {
+    const now = new Date();
+    const age = getAge(now);
+    const next = getNextBirthday(now);
+    const diff = next - now;
+
+    const totalMs = 365.25 * 24 * 3600 * 1000;
+    const prevBday = new Date(next.getFullYear() - 1, 1, 1);
+    const elapsed = now - prevBday;
+    const pct = Math.min(100, Math.round((elapsed / (next - prevBday)) * 100));
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.getElementById('age').textContent = age;
+    document.getElementById('d-days').textContent = days;
+    document.getElementById('d-hours').textContent = String(hours).padStart(2, '0');
+    document.getElementById('d-mins').textContent = String(mins).padStart(2, '0');
+    document.getElementById('d-secs').textContent = String(secs).padStart(2, '0');
+    document.getElementById('year-bar').style.width = pct + '%';
+    document.getElementById('next-bday-label').textContent = `${pct}% through this year of life — next birthday: 1 Feb ${next.getFullYear()}`;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
