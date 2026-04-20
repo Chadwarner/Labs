@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elle's Birthday Countdown</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #0d0d0d;
+    color: white;
+    overflow: hidden;
+  }
+
+  .bg {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(255, 100, 150, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(180, 100, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 80%, rgba(255, 180, 50, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .container {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    padding: 2rem;
+  }
+
+  .label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 800;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, #fff 0%, rgba(255,150,180,0.9) 50%, rgba(200,120,255,0.8) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.35);
+    margin-bottom: 4rem;
+  }
+
+  .countdown {
+    display: flex;
+    gap: clamp(1rem, 4vw, 3rem);
+    justify-content: center;
+    align-items: flex-end;
+    margin-bottom: 4rem;
+  }
+
+  .unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .unit-number {
+    font-size: clamp(3rem, 10vw, 7rem);
+    font-weight: 800;
+    letter-spacing: -3px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: white;
+    text-shadow: 0 0 40px rgba(255, 150, 180, 0.3);
+    transition: color 0.3s;
+  }
+
+  .unit-number.pulse {
+    animation: numPulse 0.4s ease-out;
+  }
+
+  @keyframes numPulse {
+    0% { transform: scale(1.08); color: #ffb3cc; }
+    100% { transform: scale(1); color: white; }
+  }
+
+  .unit-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .sep {
+    font-size: clamp(2.5rem, 8vw, 5.5rem);
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.15);
+    line-height: 1;
+    padding-bottom: 0.6rem;
+  }
+
+  .progress-wrap {
+    width: min(440px, 90vw);
+    margin: 0 auto 3rem;
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff6496, #c878ff);
+    border-radius: 99px;
+    transition: width 1s linear;
+    box-shadow: 0 0 8px rgba(255, 100, 150, 0.6);
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.25);
+  }
+
+  .message {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.02em;
+  }
+
+  .message strong {
+    color: rgba(255, 200, 220, 0.9);
+    font-weight: 600;
+  }
+
+  .celebration {
+    display: none;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffcf40, #ff6496, #c878ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: celebrate 1s ease-in-out infinite alternate;
+  }
+
+  @keyframes celebrate {
+    from { transform: scale(1) rotate(-1deg); }
+    to { transform: scale(1.04) rotate(1deg); }
+  }
+
+  .confetti-piece {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    animation: confettiFall linear forwards;
+    pointer-events: none;
+  }
+
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="container">
+  <div class="label">Counting down to</div>
+  <h1>Elle's Birthday</h1>
+  <div class="subtitle" id="birthday-date-display"></div>
+
+  <div class="countdown" id="countdown">
+    <div class="unit">
+      <div class="unit-number" id="days">--</div>
+      <div class="unit-label">Days</div>
+    </div>
+    <div class="sep">:</div>
+    <div class="unit">
+      <div class="unit-number" id="hours">--</div>
+      <div class="unit-label">Hours</div>
+    </div>
+    <div class="sep">:</div>
+    <div class="unit">
+      <div class="unit-number" id="minutes">--</div>
+      <div class="unit-label">Minutes</div>
+    </div>
+    <div class="sep">:</div>
+    <div class="unit">
+      <div class="unit-number" id="seconds">--</div>
+      <div class="unit-label">Seconds</div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress" style="width:0%"></div>
+    </div>
+    <div class="progress-label">
+      <span id="progress-start"></span>
+      <span id="progress-pct"></span>
+    </div>
+  </div>
+
+  <div class="message" id="message"></div>
+  <div class="celebration" id="celebration"></div>
+</div>
+
+<script>
+  // ── Set Elle's birthday here ──────────────────────────────────
+  const BIRTHDAY_MONTH = 7;   // month (1–12)
+  const BIRTHDAY_DAY   = 24;  // day of month
+  const BIRTHDAY_YEAR  = 2012;
+  // ─────────────────────────────────────────────────────────────
+
+  function nextBirthday() {
+    const now = new Date();
+    const year = now.getFullYear();
+    let bd = new Date(year, BIRTHDAY_MONTH - 1, BIRTHDAY_DAY, 0, 0, 0, 0);
+    if (bd <= now) bd = new Date(year + 1, BIRTHDAY_MONTH - 1, BIRTHDAY_DAY, 0, 0, 0, 0);
+    return bd;
+  }
+
+  function prevBirthday(target) {
+    return new Date(target.getFullYear() - 1, BIRTHDAY_MONTH - 1, BIRTHDAY_DAY, 0, 0, 0, 0);
+  }
+
+  const monthNames = ['January','February','March','April','May','June',
+                      'July','August','September','October','November','December'];
+
+  function turningAge(birthdayYear) {
+    return nextBirthday().getFullYear() - birthdayYear;
+  }
+
+  document.getElementById('birthday-date-display').textContent =
+    `${monthNames[BIRTHDAY_MONTH - 1]} ${BIRTHDAY_DAY}, ${BIRTHDAY_YEAR}`;
+
+  const daysEl     = document.getElementById('days');
+  const hoursEl    = document.getElementById('hours');
+  const minsEl     = document.getElementById('minutes');
+  const secsEl     = document.getElementById('seconds');
+  const progressEl = document.getElementById('progress');
+  const pctEl      = document.getElementById('progress-pct');
+  const startEl    = document.getElementById('progress-start');
+  const messageEl  = document.getElementById('message');
+  const celebEl    = document.getElementById('celebration');
+  const countEl    = document.getElementById('countdown');
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function pulseEl(el, newVal) {
+    if (el.textContent !== newVal) {
+      el.textContent = newVal;
+      el.classList.remove('pulse');
+      void el.offsetWidth;
+      el.classList.add('pulse');
+    }
+  }
+
+  function launchConfetti() {
+    const colors = ['#ff6496','#c878ff','#ffcf40','#6af','#8ff'];
+    for (let i = 0; i < 80; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.cssText = `
+        left: ${Math.random() * 100}vw;
+        top: -10px;
+        background: ${colors[Math.floor(Math.random() * colors.length)]};
+        animation-duration: ${2 + Math.random() * 3}s;
+        animation-delay: ${Math.random() * 2}s;
+        transform: scale(${0.5 + Math.random()});
+      `;
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+  }
+
+  let confettiFired = false;
+
+  function tick() {
+    const now    = new Date();
+    const target = nextBirthday();
+    const diff   = target - now;
+
+    if (diff <= 0) {
+      const age = new Date().getFullYear() - BIRTHDAY_YEAR;
+      countEl.style.display  = 'none';
+      celebEl.style.display  = 'block';
+      celebEl.textContent    = `🎂 Happy ${age}th Birthday Elle! 🎉`;
+      messageEl.textContent  = '';
+      progressEl.style.width = '100%';
+      if (!confettiFired) { launchConfetti(); confettiFired = true; }
+      return;
+    }
+
+    const totalSecs  = Math.floor(diff / 1000);
+    const d = Math.floor(totalSecs / 86400);
+    const h = Math.floor((totalSecs % 86400) / 3600);
+    const m = Math.floor((totalSecs % 3600) / 60);
+    const s = totalSecs % 60;
+
+    pulseEl(daysEl,  pad(d));
+    pulseEl(hoursEl, pad(h));
+    pulseEl(minsEl,  pad(m));
+    pulseEl(secsEl,  pad(s));
+
+    const prev     = prevBirthday(target);
+    const span     = target - prev;
+    const elapsed  = now - prev;
+    const pct      = Math.min(100, (elapsed / span) * 100).toFixed(1);
+    progressEl.style.width = pct + '%';
+    pctEl.textContent      = pct + '% of the year';
+    startEl.textContent    = monthNames[BIRTHDAY_MONTH - 1] + ' ' + BIRTHDAY_DAY + ', ' + prev.getFullYear();
+
+    const age = turningAge(BIRTHDAY_YEAR);
+    const msgs = [
+      d > 60  ? `Elle is turning <strong>${age}</strong> — still <strong>${d} days</strong> to go.` : null,
+      d > 30  ? `Under two months until Elle turns <strong>${age}</strong>! <strong>${d} days</strong> left.` : null,
+      d > 14  ? `Getting closer — just <strong>${d} days</strong> until Elle turns <strong>${age}</strong>.` : null,
+      d > 7   ? `Less than three weeks! <strong>${d} days</strong> until the big <strong>${age}</strong>.` : null,
+      d > 1   ? `Almost there — only <strong>${d} days</strong> until Elle turns <strong>${age}</strong>!` : null,
+      d === 1 ? `<strong>Tomorrow!</strong> Elle turns <strong>${age}</strong> — the big day is almost here.` : null,
+      d === 0 ? `<strong>Today is the day!</strong> Elle turns <strong>${age}</strong>! 🎉` : null,
+    ].find(Boolean);
+
+    messageEl.innerHTML = msgs || `<strong>${d} days</strong> until Elle turns <strong>${age}</strong>.`;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
