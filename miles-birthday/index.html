@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miles — Birthday Countdown</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f3; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.wrap { width: 100%; max-width: 400px; padding: 2rem 1.25rem; text-align: center; }
+.name { font-size: 13px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.title { font-size: 24px; font-weight: 600; color: #1a1a1a; margin-bottom: 1.75rem; }
+.age-hero { background: #185FA5; border-radius: 20px; padding: 1.75rem 1rem; margin-bottom: 1rem; }
+.age-num { font-size: 80px; font-weight: 700; color: white; line-height: 1; }
+.age-label { font-size: 15px; color: rgba(255,255,255,0.75); margin-top: 6px; }
+.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 1rem; }
+.tile { background: white; border-radius: 14px; padding: 1.1rem; border: 1.5px solid #e8e8e8; }
+.tile .num { font-size: 36px; font-weight: 700; color: #1a1a1a; line-height: 1; }
+.tile .lbl { font-size: 12px; color: #888; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+.bar-wrap { background: white; border-radius: 14px; padding: 1.1rem 1.25rem; margin-bottom: 1rem; border: 1.5px solid #e8e8e8; text-align: left; }
+.bar-label { display: flex; justify-content: space-between; font-size: 13px; color: #888; margin-bottom: 10px; }
+.bar-label span:last-child { font-weight: 600; color: #1a1a1a; }
+.bar-track { height: 8px; background: #f0f0f0; border-radius: 99px; overflow: hidden; }
+.bar-fill { height: 8px; background: #185FA5; border-radius: 99px; transition: width 1s ease; }
+.fun { background: white; border-radius: 14px; padding: 0.25rem 1.25rem; border: 1.5px solid #e8e8e8; text-align: left; }
+.fun-row { display: flex; justify-content: space-between; align-items: center; padding: 0.9rem 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+.fun-row:last-child { border-bottom: none; }
+.fun-row .k { color: #888; }
+.fun-row .v { font-weight: 600; color: #1a1a1a; }
+.bday-banner { display: none; background: #185FA5; color: white; border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; font-size: 20px; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="name">Miles Warner</div>
+  <div class="title">Birthday countdown</div>
+
+  <div class="bday-banner" id="bdayBanner">Happy Birthday Miles!</div>
+
+  <div class="age-hero">
+    <div class="age-num" id="age">—</div>
+    <div class="age-label" id="ageLabel">years old</div>
+  </div>
+
+  <div class="grid">
+    <div class="tile"><div class="num" id="dDays">—</div><div class="lbl">days</div></div>
+    <div class="tile"><div class="num" id="dHours">—</div><div class="lbl">hours</div></div>
+    <div class="tile"><div class="num" id="dMins">—</div><div class="lbl">minutes</div></div>
+    <div class="tile"><div class="num" id="dSecs">—</div><div class="lbl">seconds</div></div>
+  </div>
+
+  <div class="bar-wrap">
+    <div class="bar-label"><span>Year progress</span><span id="barPct">—</span></div>
+    <div class="bar-track"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+  </div>
+
+  <div class="fun">
+    <div class="fun-row"><span class="k">Next birthday</span><span class="v" id="nextDate">—</span></div>
+    <div class="fun-row"><span class="k">Day of the week</span><span class="v" id="bdayDow">—</span></div>
+    <div class="fun-row"><span class="k">Days alive</span><span class="v" id="daysAlive">—</span></div>
+    <div class="fun-row"><span class="k">Weeks alive</span><span class="v" id="weeksAlive">—</span></div>
+  </div>
+</div>
+
+<script>
+const MONTH = 9, DAY = 2, BIRTH_YEAR = 2010;
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function tick() {
+  const now = new Date();
+  const yr = now.getFullYear();
+  let next = new Date(yr, MONTH-1, DAY);
+  if (now >= next) next = new Date(yr+1, MONTH-1, DAY);
+  const isBday = now.getMonth()===MONTH-1 && now.getDate()===DAY;
+
+  const diff = next - now;
+  const totalSecs = Math.floor(diff/1000);
+  document.getElementById('dDays').textContent = Math.floor(totalSecs/86400);
+  document.getElementById('dHours').textContent = pad(Math.floor(totalSecs/3600)%24);
+  document.getElementById('dMins').textContent = pad(Math.floor(totalSecs/60)%60);
+  document.getElementById('dSecs').textContent = pad(totalSecs%60);
+
+  const age = yr - BIRTH_YEAR - (now < new Date(yr, MONTH-1, DAY) ? 1 : 0);
+  document.getElementById('age').textContent = age;
+  document.getElementById('ageLabel').textContent = isBday ? 'years old today!' : 'years old';
+  document.getElementById('bdayBanner').style.display = isBday ? 'block' : 'none';
+
+  const prev = new Date(next.getFullYear()-1, MONTH-1, DAY);
+  const pct = Math.round(((now-prev)/(next-prev))*100);
+  document.getElementById('barPct').textContent = pct+'%';
+  document.getElementById('barFill').style.width = pct+'%';
+
+  document.getElementById('nextDate').textContent = DAY+' '+MONTHS[MONTH-1]+' '+next.getFullYear();
+  document.getElementById('bdayDow').textContent = DAYS[next.getDay()];
+
+  const birth = new Date(BIRTH_YEAR, MONTH-1, DAY);
+  const daysAlive = Math.floor((now-birth)/86400000);
+  document.getElementById('daysAlive').textContent = daysAlive.toLocaleString();
+  document.getElementById('weeksAlive').textContent = Math.floor(daysAlive/7).toLocaleString();
+}
+
+tick();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>
