@@ -532,6 +532,51 @@ body {
 .review-user.correct { color:var(--correct); }
 .review-correct-ans { font-size:15px; color:var(--correct); font-style:italic; margin-bottom:4px; }
 .review-explanation { font-size:14px; color:var(--muted); line-height:1.45; margin-top:4px; }
+
+/* ─── FILL IN BLANK ─── */
+.fill-wrap { display:flex; flex-direction:column; gap:12px; margin-top:8px; }
+.fill-input {
+  background:var(--surface2);
+  border:2px solid var(--border2);
+  border-radius:10px;
+  padding:16px 18px;
+  color:var(--text);
+  font-family:'Barlow',sans-serif;
+  font-size:18px;
+  width:100%;
+  outline:none;
+  transition:border-color 0.15s;
+}
+.fill-input:focus { border-color:#555; }
+.fill-input.correct { border-color:var(--correct); background:rgba(74,222,128,0.1); color:var(--correct); }
+.fill-input.wrong   { border-color:var(--wrong);   background:rgba(248,113,113,0.1); color:var(--wrong); }
+.submit-btn {
+  padding:16px 24px;
+  border-radius:10px;
+  border:none;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;
+  font-size:18px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  cursor:pointer;
+  transition:all 0.15s;
+  align-self:flex-start;
+  width:100%;
+}
+.submit-btn.mac-btn { background:var(--mac); color:#1a1400; }
+.submit-btn.acc-btn { background:var(--acc); color:#0a1a0a; }
+.submit-btn:active  { opacity:0.85; transform:scale(0.985); }
+.submit-btn:disabled{ opacity:0.4; cursor:not-allowed; }
+.review-quote {
+  font-style:italic;
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:4px;
+  padding-left:8px;
+  border-left:2px solid var(--border2);
+}
+
 </style>
 </head>
 <body>
@@ -1058,48 +1103,667 @@ body {
 
 <script>
 // ─── QUIZ DATA ───────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// QUIZ DATA — 50 questions per quiz, mixed types, harder
+// Types: "mc" = multiple choice, "fill" = type the missing word
+// For fill: correctAnswers = array of accepted strings (case-insensitive)
+// quote field shows in italic block above the question
+// ═══════════════════════════════════════════════════════════════
+
 const QUIZZES = {
+
+// ───────────────────────────────────────────────────────────────
 macbeth:{
   title:"Macbeth",color:"mac",
   questions:[
-    {theme:"Supernatural",question:"What do the words 'Fair is foul, and foul is fair' establish about the world of the play?",options:["Moral order is inverted — good and evil are reversed throughout","That the weather will be stormy","That the witches are friendly helpers","That Scotland is a peaceful kingdom"],correct:0,explanation:"This oxymoron corrupts reality from line one — what appears good is evil, what appears evil may be good. It's the spine of the entire play."},
-    {theme:"Power",question:"In his soliloquy before killing Duncan, Macbeth admits his only reason for the murder is:",options:["Fear of what the witches will do","Lady Macbeth has threatened to leave him","'Vaulting ambition' — he has no other justification","Duncan has treated him unfairly"],correct:2,explanation:"'Vaulting ambition, which o'erleaps itself' — Macbeth names his own fatal flaw. No moral case for the murder. His self-awareness makes him a tragic hero: he sees it and does it anyway."},
-    {theme:"Lady Macbeth",question:"When Lady Macbeth says 'Unsex me here', what is she asking for?",options:["To become physically stronger than Macbeth","Evil spirits to strip her femininity so she can murder without remorse","More respect from Macbeth","To disguise herself as a man"],correct:1,explanation:"She invokes evil to remove the compassion and remorse Jacobeans associated with women. She knows she must be transformed — a woman of this era cannot commit this act alone."},
-    {theme:"Supernatural",question:"What does 'None of woman born shall harm Macbeth' actually turn out to mean?",options:["Macbeth is completely safe from all enemies","Only supernatural forces can harm him","Macduff, born by caesarean, is the loophole — the prophecy is a trap","The witches are simply lying"],correct:2,explanation:"The witches mislead with technically true language. Macbeth hears what he wants. Language itself becomes a fatal trap."},
-    {theme:"Power",question:"By Act 5, Macbeth says 'the firstlings of my heart shall be the firstlings of my hand.' What does this reveal?",options:["He has become more thoughtful","He now acts on pure impulse without reflection — the opposite of good kingship","He has become the king he always wanted to be","He is showing genuine courage"],correct:1,explanation:"Good Jacobean kingship required deep reflection. Macbeth now acts on impulse — this is why he orders the murder of Macduff's innocent family. He has become a tyrant."},
-    {theme:"Lady Macbeth",question:"What does 'Out, damned spot! Out, I say!' reveal about Lady Macbeth?",options:["She has literal blood on her hands","She is angry about housekeeping","Guilt has shattered her mind — imaginary blood she cannot wash away","She is casting a spell"],correct:2,explanation:"The guilt she suppressed in Acts 1–2 erupts in sleep when her conscious mind cannot control it. She is destroyed by the very thing she helped create."},
-    {theme:"Supernatural",question:"Which quote shows Macbeth hallucinating just before murdering Duncan?",options:['"Fair is foul, and foul is fair"','"Something wicked this way comes"','"Is this a dagger which I see before me?"','"Upon my head they placed a fruitless crown"'],correct:2,explanation:"This hallucination shows the supernatural is now inside Macbeth's mind. Guilt and ambition blur reality — he cannot trust his own senses."},
-    {theme:"Power",question:"Which quote shows that Macbeth's power brings him no peace?",options:['"Stars, hide your fires"','"To be thus is nothing; but to be safely thus"','"Vaulting ambition, which o\'erleaps itself"','"Upon my head they placed a fruitless crown"'],correct:1,explanation:"Once king, Macbeth is still terrified. Power gained through evil creates only paranoia. More power = more fear."},
-    {theme:"Lady Macbeth",question:"How does Lady Macbeth manipulate Macbeth when he hesitates before the murder?",options:["She reminds him of the witches' prophecy","She offers to do the murder herself","She attacks his masculinity — 'When you durst do it, then you were a man'","She tells him Duncan deserves to die"],correct:2,explanation:"Psychological manipulation — she exploits his insecurity about proving his manhood. This is her real power over him: not physical, but psychological."},
-    {theme:"Power",question:"Complete Macbeth's quote: '___ ambition, which o'erleaps itself'",options:["Vaulting","Burning","Reckless","Dark"],correct:0,explanation:"'Vaulting' — like a horse jumping too high and falling. His ambition overreaches and destroys him. He even names his own fatal flaw before he acts."},
-    {theme:"Supernatural",question:"Complete the witches' famous opening: 'Fair is foul, and ___ is fair'",options:["foul","dark","evil","night"],correct:0,explanation:"This chiasmus inverts morality from the very first line. Nothing in this play can be trusted at face value."},
-    {theme:"Lady Macbeth",question:"Complete Lady Macbeth's sleepwalking line: 'Out, ___ spot! Out, I say!'",options:["damned","bloody","cursed","black"],correct:0,explanation:"'Damned' carries religious weight — she is literally damned. The blood is guilt made physical, and no willpower can remove it."},
-    {theme:"Context",question:"Why would a Jacobean audience find Duncan's murder especially horrifying?",options:["Duncan was a popular character","Violence was unusual in Jacobean theatre","They believed in the Divine Right of Kings — killing a king was a sin against God","Jacobeans feared ghosts"],correct:2,explanation:"The Divine Right of Kings meant the monarch was chosen by God. Killing Duncan was a cosmic act against the natural order. Nature itself reacts: storms, eclipses, horses eating horses."},
-    {theme:"Context",question:"Why did Shakespeare write Macbeth for King James I — what does the witchcraft tell us?",options:["Shakespeare thought witchcraft was harmless entertainment","James I had written a book on demonology — Shakespeare was engaging with his patron's obsessions","Witches weren't taken seriously by educated Jacobeans","The witches represent Shakespeare's own beliefs"],correct:1,explanation:"James I wrote 'Daemonologie' about witchcraft. By featuring witches prominently, Shakespeare engaged his patron directly and reinforced the Divine Right of Kings — vital to James, who feared assassination."},
-    {theme:"Structure",question:"Macbeth is a tragic hero. What does this mean about his dramatic arc?",options:["He is always evil but pretends to be good","He starts noble, is corrupted by a fatal flaw, falls from grace, and dies","He is a victim who never makes his own choices","He becomes good again at the end"],correct:1,explanation:"Tragic structure: noble hero → fatal flaw exposed → corruption → catastrophic fall → death. He begins as 'brave Macbeth' and ends as 'this dead butcher'. The tragedy is he sees his flaw and still falls."}
-  ]
+
+// ── SUPERNATURAL ── 16 questions ──────────────────────────────
+
+{type:"mc",theme:"Supernatural",
+ question:"'Fair is foul, and foul is fair' is an example of which literary device?",
+ options:["Simile","Oxymoron","Alliteration","Personification"],
+ correct:1,
+ explanation:"It's an oxymoron — two contradictory ideas fused together. Shakespeare uses it to signal from the first line that moral reality in this play is inverted and corrupted."},
+
+{type:"fill",theme:"Supernatural",
+ question:"Complete the witches' famous opening line.",
+ quote:"'Fair is foul, and ___ is fair'",
+ correctAnswers:["foul","Foul"],display:"foul",
+ explanation:"'Fair is foul, and foul is fair' — the oxymoron establishes moral chaos from the very first line. Nothing can be trusted. Good and evil are interchangeable in this world."},
+
+{type:"mc",theme:"Supernatural",
+ question:"Why does the fact that the witches' first prophecy (Thane of Cawdor) immediately comes true make it so dangerous?",
+ options:["It proves the witches are genuinely magical","It gives Macbeth false confidence that all their prophecies will come true exactly as he imagines","It shows Duncan is a weak king who gives titles too easily","It convinces Banquo to join the conspiracy"],
+ correct:1,
+ explanation:"This is the trap. Because the first prophecy comes true, Macbeth believes the others will too — without questioning what they actually mean. The witches exploit this by framing later prophecies deceptively."},
+
+{type:"mc",theme:"Supernatural",
+ question:"What does Macbeth's dagger hallucination before the murder tell us about the supernatural in the play?",
+ options:["The witches have conjured a real dagger to help him","The supernatural is now operating inside his own mind — guilt and ambition corrupt his perception of reality","Duncan's ghost is warning Macbeth not to proceed","Lady Macbeth has drugged him to make him see things"],
+ correct:1,
+ explanation:"The dagger hallucination is crucial — the supernatural has moved from external (witches, prophecies) to internal (Macbeth's own corrupted mind). His guilt and ambition are so powerful they manifest as vision."},
+
+{type:"fill",theme:"Supernatural",
+ question:"Complete Macbeth's hallucination before the murder.",
+ quote:"'Is this a ___ which I see before me?'",
+ correctAnswers:["dagger","Dagger"],display:"dagger",
+ explanation:"The dagger hallucination is the moment the supernatural enters Macbeth's mind. He can no longer trust his own senses — guilt and ambition have corrupted his grip on reality."},
+
+{type:"mc",theme:"Supernatural",
+ question:"'Something wicked this way comes' is said by the witches in Act 4. What makes this significant?",
+ options:["It proves the witches fear Macbeth","It shows Macbeth has become so corrupted he is now recognised as evil even by the supernatural forces that triggered his downfall","It is just a dramatic way to announce his arrival","It suggests the witches plan to betray Macbeth"],
+ correct:1,
+ explanation:"This is a devastating reversal. The witches who triggered Macbeth's corruption now see him as wicked — he has surpassed them in evil. He started as their victim and has become something worse."},
+
+{type:"mc",theme:"Supernatural",
+ question:"What literary device does Shakespeare use in 'None of woman born shall harm Macbeth' to create dramatic irony?",
+ options:["A straightforward prophecy that happens to be false","A deliberately ambiguous prophecy that is technically true but designed to mislead","A metaphor for Macbeth's invincibility","A lie told by the witches to destroy him quickly"],
+ correct:1,
+ explanation:"The witches never lie — they use equivocation. The prophecy is technically true (Macduff was born by caesarean) but designed to make Macbeth hear what he wants to hear. Language itself becomes a weapon."},
+
+{type:"fill",theme:"Supernatural",
+ question:"Which adjective describes Macbeth's 'ambition' in his pre-murder soliloquy?",
+ quote:"'___ ambition, which o'erleaps itself'",
+ correctAnswers:["vaulting","Vaulting"],display:"Vaulting",
+ explanation:"'Vaulting' — like a horse jumping too high and falling. The ambition overreaches and destroys its owner. Crucially, Macbeth identifies this himself before he acts, making him a self-aware tragic hero."},
+
+{type:"mc",theme:"Supernatural",
+ question:"How do the witches in Act 4 give Macbeth false security about Birnam Wood?",
+ options:["They tell him forests cannot move, which is obviously true","They tell him he won't be harmed until Birnam Wood moves to Dunsinane — which Macbeth assumes is impossible, but Malcolm's soldiers carry branches to hide their numbers","They show him a vision of Birnam Wood burning","They tell him trees will protect him in battle"],
+ correct:1,
+ explanation:"Another piece of equivocation. Technically true — soldiers do carry branches from Birnam Wood. Macbeth hears 'impossible' and takes comfort. The witches exploit his willingness to believe what flatters him."},
+
+{type:"mc",theme:"Supernatural",
+ question:"Banquo's ghost appears only to Macbeth at the banquet. What does this suggest about the supernatural in the play?",
+ options:["Banquo is genuinely haunting Macbeth as divine punishment","The ghost is a product of Macbeth's guilty conscience — Shakespeare presents guilt as a form of internal supernatural torment","The other guests simply cannot see ghosts","Lady Macbeth has arranged for the ghost to appear"],
+ correct:1,
+ explanation:"Whether the ghost is 'real' or not, Shakespeare is showing guilt externalised. Macbeth's crime has made him unable to participate in normal social life — the supernatural manifestation of guilt isolates him completely."},
+
+{type:"mc",theme:"Supernatural",
+ question:"The witches say 'the weird sisters, hand in hand'. What did 'weird' mean to a Jacobean audience?",
+ options:["Strange or frightening","Fate-controlling — from the Old English 'wyrd', meaning destiny","Ugly and deformed","Powerless but threatening"],
+ correct:1,
+ explanation:"'Weird' comes from the Old English 'wyrd' — meaning fate or destiny. For a Jacobean audience, the Weird Sisters weren't just strange women: they were literally controllers of fate. This made them far more terrifying than simply odd."},
+
+{type:"mc",theme:"Supernatural",
+ question:"How does the unnatural behaviour of nature after Duncan's murder — storms, eclipses, horses eating each other — function within the play's meaning?",
+ options:["Shakespeare just wanted dramatic special effects","It shows the Divine Right of Kings — killing God's chosen king disrupts the entire natural order","It is a coincidence that happens at the same time","It shows the witches are punishing Scotland"],
+ correct:1,
+ explanation:"Jacobeans believed the king was God's representative on Earth. His murder doesn't just break a law — it breaks the cosmic order. Nature's chaos is the universe responding to the violation of the Divine Right of Kings."},
+
+{type:"fill",theme:"Supernatural",
+ question:"What word completes the witches' chant about Macbeth in Act 4?",
+ quote:"'Something ___ this way comes'",
+ correctAnswers:["wicked","Wicked"],display:"wicked",
+ explanation:"The witches calling Macbeth 'wicked' is the clearest signal of his transformation. He started as their target; by Act 4 he has become something they themselves recognise as evil."},
+
+{type:"mc",theme:"Supernatural",
+ question:"Why does Macbeth say 'Stars, hide your fires; let not light see my black and deep desires'?",
+ options:["He is afraid of the dark","He wants to hide his murderous ambition from God and the natural world — power-hunger forces him into cosmic secrecy","He is casting a spell he learned from the witches","He is speaking metaphorically about wanting a clear night sky"],
+ correct:1,
+ explanation:"Macbeth literally asks the stars to look away. This links to the theme of equivocation — he cannot bear his true intentions to be seen. It also signals the isolation that ambition forces: he must hide even from divine sight."},
+
+{type:"mc",theme:"Supernatural",
+ question:"In the witches' prophecy, what does 'Macbeth shall never vanquished be until Great Birnam Wood to high Dunsinane Hill shall come against him' achieve dramatically?",
+ options:["It guarantees Macbeth will survive the play","It creates false security that drives him to recklessness, while the audience suspects the prophecy will be fulfilled ironically","It is a genuine mistake by the witches","It shows the witches want Macbeth to survive"],
+ correct:1,
+ explanation:"The prophecy creates dramatic irony — the audience suspects it will be fulfilled in an unexpected way, while Macbeth takes it as a guarantee of safety. This recklessness speeds his downfall."},
+
+{type:"mc",theme:"Supernatural",
+ question:"Which of these best explains why Shakespeare wrote about witchcraft in Macbeth?",
+ options:["Witchcraft was fashionable as a dramatic topic in 1606","King James I, for whom the play was written, had authored 'Daemonologie' — a treatise on witchcraft — and the play directly engages his patron's intellectual obsessions","Shakespeare personally believed in witches","Witches were traditional characters in tragedy"],
+ correct:1,
+ explanation:"James I was obsessed with witchcraft — he even presided over witch trials and wrote a book on demonology. By featuring the witches prominently, Shakespeare was flattering and engaging his royal patron while also exploring genuine Jacobean fears."},
+
+// ── POWER ── 17 questions ────────────────────────────────────
+
+{type:"mc",theme:"Power",
+ question:"Why is Macbeth described as a 'tragic hero' rather than simply a villain?",
+ options:["Because he eventually feels guilty","Because he starts the play as a noble, celebrated hero and is brought down by a specific fatal flaw — his ambition — which he is aware of","Because he is sympathetic throughout the play","Because he only kills people who deserve it"],
+ correct:1,
+ explanation:"Tragic hero structure: noble status → fatal flaw → temptation → fall → death. Macbeth starts as 'brave Macbeth', a celebrated warrior. His self-awareness of his own ambition ('vaulting ambition') is what makes him tragic rather than simply evil."},
+
+{type:"mc",theme:"Power",
+ question:"Macbeth is described as 'Valour's minion' and 'brave Macbeth' in Act 1. Why does Shakespeare establish him as heroic at the start?",
+ options:["To confuse the audience about his character","So that his fall from grace has maximum impact — the higher he starts, the further and more tragic his fall","To show that warriors are naturally violent","To make Lady Macbeth seem more dangerous by contrast"],
+ correct:1,
+ explanation:"Tragic structure requires an elevated starting point. If Macbeth starts as a villain, there's no tragedy — just crime. By establishing him as genuinely heroic, Shakespeare makes his corruption feel like a loss, not just a revelation."},
+
+{type:"fill",theme:"Power",
+ question:"Complete Macbeth's description of his hollow kingship.",
+ quote:"'Upon my head they placed a ___ crown'",
+ correctAnswers:["fruitless","Fruitless"],display:"fruitless",
+ explanation:"'Fruitless' — he has no heir. His power will die with him. Everything he murdered for produced nothing lasting. This is Shakespeare's argument: power gained through evil is inherently sterile and empty."},
+
+{type:"mc",theme:"Power",
+ question:"What does 'To be thus is nothing; but to be safely thus' reveal about the nature of Macbeth's kingship?",
+ options:["He is content as king but worried about external threats","Being king has brought him no satisfaction — he is still terrified, and power without security is worthless to him","He is planning to give up the throne","He is angry that Banquo is still alive"],
+ correct:1,
+ explanation:"This line is Shakespeare's clearest statement that wrongly-gained power produces only paranoia. Macbeth has everything he murdered for and it has made him more afraid, not less. Power divorced from legitimacy cannot be enjoyed."},
+
+{type:"mc",theme:"Power",
+ question:"How does Duncan's kingship contrast with Macbeth's as an example of legitimate versus illegitimate power?",
+ options:["Duncan was a weak king who deserved to be replaced","Duncan was God-chosen, virtuous, and loyal to his thanes; Macbeth rules through fear and murders innocents — Shakespeare presents this as the difference between good and tyrannical kingship","Both kings are presented as equally flawed","Duncan was more popular but no more virtuous"],
+ correct:1,
+ explanation:"The contrast is central to the play's political argument. Duncan: inspires loyalty, rewards bravery, is described as 'meek' and 'clear in his great office'. Macbeth: described as a 'tyrant', murders innocents, dies isolated. Good kingship requires moral virtue, not just power."},
+
+{type:"mc",theme:"Power",
+ question:"By Act 5, Macbeth says 'the firstlings of my heart shall be the firstlings of my hand.' What has changed about how he exercises power?",
+ options:["He has become more strategic and careful","He now acts on pure impulse without any moral reflection — the opposite of how he deliberated in Act 1","He is finally decisive in a positive way","He is following the witches' orders"],
+ correct:1,
+ explanation:"In Act 1, Macbeth agonised over every decision. By Act 4, he immediately orders the massacre of Macduff's innocent family without hesitation. This impulsiveness is the final stage of his corruption — he has abandoned all reflection."},
+
+{type:"mc",theme:"Power",
+ question:"Why does Macduff describe Scotland under Macbeth as a place where 'each new morn, new widows howl, new orphans cry'?",
+ options:["Scotland is at war with England","This is dramatic irony — Macduff doesn't yet know his own wife and children have been murdered, making his words unknowingly personal","Macduff is exaggerating for political effect","Scotland has been hit by plague"],
+ correct:1,
+ explanation:"Devastating dramatic irony. Macduff is describing Macbeth's tyranny in the abstract — not yet knowing that his own family are among Macbeth's victims. Shakespeare makes the audience hold this knowledge, intensifying the horror."},
+
+{type:"fill",theme:"Power",
+ question:"Complete the phrase that shows Macbeth's fatally reckless decision-making in Act 4.",
+ quote:"'The firstlings of my heart shall be the ___ of my hand'",
+ correctAnswers:["firstlings","Firstlings"],display:"firstlings",
+ explanation:"'Firstlings' — the first impulse of his heart will immediately become action. No reflection, no hesitation. Macbeth has abandoned the deliberate thinking of a good king and become purely reactive — a tyrant operating on instinct."},
+
+{type:"mc",theme:"Power",
+ question:"What does the image of a 'fruitless crown' and a 'barren sceptre' suggest about the kind of power Macbeth holds?",
+ options:["He has no legitimate children to inherit his throne, making his power entirely temporary and purposeless","He is infertile due to a curse from the witches","His crown is not made of real gold","Scotland's economy has collapsed under his rule"],
+ correct:0,
+ explanation:"'Fruitless' and 'barren' mean no heirs. Macbeth has sacrificed everything for power that will die with him. The irony is total: he killed Banquo to prevent his children taking the throne, but Macbeth has no children who can. The throne dies with him."},
+
+{type:"mc",theme:"Power",
+ question:"How does Malcolm's coronation at the end of the play restore the political theme?",
+ options:["It shows power passes naturally to the strongest warrior","It restores the Divine Right of Kings — legitimate, God-sanctioned succession replaces the chaos of Macbeth's stolen throne","Malcolm is simply more popular","It shows democracy triumphing over monarchy"],
+ correct:1,
+ explanation:"The play's political argument concludes with order restored through legitimate succession. Malcolm is the rightful heir, chosen through proper means. Macbeth's stolen power brought chaos; Malcolm's legitimate power restores peace."},
+
+{type:"mc",theme:"Power",
+ question:"What does Shakespeare suggest about the relationship between ambition and moral integrity through Macbeth's arc?",
+ options:["Ambition is always destructive, even in small doses","Unchecked ambition that overrides moral conscience inevitably destroys its owner — ambition without virtue produces tyranny, not greatness","Ambition is only dangerous for kings","Macbeth would have been fine if he'd been more careful"],
+ correct:1,
+ explanation:"This is the play's central moral argument. Macbeth has ambition without moral restraint — he knows the murder is wrong, does it anyway, and it destroys everything including himself. Shakespeare is arguing that virtue must govern ambition, not the other way around."},
+
+{type:"mc",theme:"Power",
+ question:"The Sergeant describes Macbeth's killing of Macdonwald: 'he unseamed him from the nave to the chaps'. Why does Shakespeare open the play with this violent image of Macbeth?",
+ options:["To make Macbeth immediately seem like a villain","To establish that Macbeth is capable of extreme violence in service of a just cause — which makes his later violence in service of ambition more troubling by contrast","To satisfy the audience's appetite for blood","To show that Scottish warfare was particularly brutal"],
+ correct:1,
+ explanation:"The opening violence is essential context. When Macbeth kills Macdonwald, it's heroic — sanctioned violence in defence of the king. When he kills Duncan, it's the same violence turned to selfish ends. Shakespeare uses this contrast deliberately."},
+
+{type:"fill",theme:"Power",
+ question:"Complete the phrase from Macbeth's Act 1 soliloquy about why he should NOT kill Duncan.",
+ quote:"'I have no spur to prick the sides of my intent, but only ___ ambition'",
+ correctAnswers:["vaulting","Vaulting"],display:"vaulting",
+ explanation:"This is the moment Macbeth admits to himself he has no good reason to kill Duncan — only ambition. He identifies his fatal flaw, understands it will destroy him, and chooses to act anyway. This is what makes him a tragic hero rather than simply a villain."},
+
+{type:"mc",theme:"Power",
+ question:"Why is it significant that Malcolm, not a warrior, restores order at the end of the play?",
+ options:["It shows Shakespeare preferred civilian rulers","Malcolm represents legitimate governance — power derived from rightful succession rather than violence, the antithesis of Macbeth's stolen throne","Shakespeare couldn't think of a better ending","Malcolm is simply the best fighter left"],
+ correct:1,
+ explanation:"Malcolm's restoration demonstrates Shakespeare's political argument: legitimate power, not military force, is the foundation of good governance. Macbeth tried to rule through fear and violence — it collapsed. Malcolm inherits through rightful succession."},
+
+{type:"mc",theme:"Power",
+ question:"Why does Macbeth hire murderers to kill Banquo rather than doing it himself as he did with Duncan?",
+ options:["He is physically unable to do it himself","He wants to distance himself from the act — power has made him both more violent and more cowardly, delegating evil while maintaining a facade of innocence","Lady Macbeth refuses to let him","He doesn't consider Banquo a worthy opponent"],
+ correct:1,
+ explanation:"This shift shows Macbeth's moral deterioration. Killing Duncan required enormous psychological effort. Ordering Banquo's death is easy — and delegating it shows both his growing comfort with murder and his growing political calculation."},
+
+{type:"mc",theme:"Power",
+ question:"What does 'Stars, hide your fires; let not light see my black and deep desires' reveal about how Macbeth relates to power and conscience?",
+ options:["He is afraid of night attacks on the castle","He cannot bear his murderous ambition to be seen by God or the world — his desire for power forces him into moral hiding","He is performing a magic ritual","He is speaking about his love for Lady Macbeth"],
+ correct:1,
+ explanation:"This soliloquy shows Macbeth knows his desires are wrong. He doesn't argue they are justified — he asks for darkness to cover them. Power-hunger has made him a man who must hide from his own conscience and from divine judgement."},
+
+{type:"mc",theme:"Power",
+ question:"At the end of the play, Macbeth is called a 'dead butcher' by Malcolm. How does this contrast with Act 1's description of him?",
+ options:["There is no contrast — he was always described negatively","In Act 1 he is 'brave Macbeth', 'Valour's minion', celebrated by his king. By Act 5 he is a 'dead butcher'. The arc from hero to monster is complete — Shakespeare's tragic structure fulfilled.","The two descriptions mean essentially the same thing","Malcolm is being unfair in his assessment"],
+ correct:1,
+ explanation:"The contrast is the entire tragic arc in two phrases. 'Brave Macbeth' to 'dead butcher' — from the pinnacle of heroic honour to the absolute nadir of moral degradation. This is what Shakespeare means by tragic fall."},
+
+{type:"mc",theme:"Power",
+ question:"Macbeth tells himself: 'If it were done when 'tis done, then 'twere well it were done quickly.' What does this logic reveal?",
+ options:["He has thought carefully about the ethics of the murder","He is trying to avoid thinking — he wants to act before his conscience can stop him. This reveals that he knows it's wrong but is choosing speed over reflection","He is being practical about timing","He is quoting something Lady Macbeth told him"],
+ correct:1,
+ explanation:"This is self-deception dressed as practicality. Macbeth knows that thinking about the murder will stop him — so he is trying not to think. This reveals his awareness of his own moral failure and his choice to override it through action."},
+
+// ── LADY MACBETH ── 17 questions ─────────────────────────────
+
+{type:"mc",theme:"Lady Macbeth",
+ question:"Why does Lady Macbeth call on 'spirits that tend on mortal thoughts' to 'unsex me here'?",
+ options:["She wants to become physically stronger for battle","As a Jacobean woman she lacks the social and psychological 'permission' to commit murder — she must be supernaturally transformed to override the compassion and remorse associated with femininity","She is jealous of Macbeth's strength","She wants to disguise herself as a man to kill Duncan directly"],
+ correct:1,
+ explanation:"This is Shakespeare showing how Jacobean gender ideology operates. Women were expected to be compassionate and nurturing — traits incompatible with murder. Lady Macbeth knows she must transcend these expectations, and invokes the supernatural to do so."},
+
+{type:"fill",theme:"Lady Macbeth",
+ question:"Complete Lady Macbeth's instruction to herself about concealing evil.",
+ quote:"'Look like the innocent flower, but be the ___ under't'",
+ correctAnswers:["serpent","Serpent"],display:"serpent",
+ explanation:"The serpent under the flower — Lady Macbeth is coaching herself in the art of deception. She will present an innocent surface while concealing murderous intent. This directly links to the 'fair is foul' theme: appearances and reality are weaponised."},
+
+{type:"mc",theme:"Lady Macbeth",
+ question:"Lady Macbeth says 'Come, you spirits... make thick my blood; stop up the access and passage to remorse.' Why does she want her blood thickened?",
+ options:["She is performing a witchcraft ritual to protect herself","She wants to prevent remorse and compassion from reaching her heart and stopping her from acting — to literally block her capacity for guilt","She is trying to become immortal","She fears she will faint at the sight of blood"],
+ correct:1,
+ explanation:"The image is physiological: she wants to physically obstruct the pathways by which compassion would reach her. This shows remarkable self-awareness — she knows her conscience would stop her if she allowed it to function, so she asks for it to be shut down."},
+
+{type:"mc",theme:"Lady Macbeth",
+ question:"When Lady Macbeth says 'Was the hope drunk wherein you dressed yourself?', what technique is she using?",
+ options:["She is asking a genuine question about his state of mind","Rhetorical question as a weapon — she is mocking his hesitation, suggesting his earlier courage was just bravado fuelled by alcohol","She is genuinely concerned for his health","She is referring to the witches' prophecy"],
+ correct:1,
+ explanation:"This is Lady Macbeth at her most psychologically manipulative. The rhetorical question doesn't seek an answer — it attacks. She is ridiculing his hesitation by implying his earlier confidence was just drunkenness, not genuine resolve."},
+
+{type:"fill",theme:"Lady Macbeth",
+ question:"Complete Lady Macbeth's attack on Macbeth's masculinity.",
+ quote:"'When you ___ do it, then you were a man'",
+ correctAnswers:["durst","Durst"],display:"durst",
+ explanation:"'When you durst do it' — 'durst' means 'dared'. Lady Macbeth is saying his willingness to commit the murder was what made him a man. Now that he's hesitating, he's less than a man in her eyes. She weaponises his masculinity to override his conscience."},
+
+{type:"mc",theme:"Lady Macbeth",
+ question:"How does Lady Macbeth's plan to drug Duncan's guards demonstrate her role in the murder?",
+ options:["It shows she is more violent than Macbeth","It shows she is the strategic mastermind — while Macbeth hesitates emotionally, she has already planned the practical mechanics of the murder","It suggests she has done this before","It makes Macbeth look weak by comparison"],
+ correct:1,
+ explanation:"Lady Macbeth plans the murder with cold precision while Macbeth is still agonising over whether to do it. She drugs the guards, plans the framing, and delegates the actual killing to Macbeth. She is the architect; he is the instrument."},
+
+{type:"mc",theme:"Lady Macbeth",
+ question:"After the murder, Lady Macbeth says 'A little water clears us of this deed.' How does Act 5 make this line devastating?",
+ options:["It turns out she was right — the water did help","In Act 5 she obsessively imagines blood that won't wash off — directly contradicting this earlier confidence. What she dismissed as easy has destroyed her mind","She means it metaphorically throughout","She later changes her mind about water"],
+ correct:1,
+ explanation:"This is one of Shakespeare's most powerful structural ironies. Lady Macbeth's casual certainty in Act 2 is destroyed by Act 5 — 'A little water' becomes endless, frantic washing that can never remove the imaginary blood. Her suppressed guilt overwhelms her."},
+
+{type:"mc",theme:"Lady Macbeth",
+ question:"In the sleepwalking scene, Lady Macbeth says 'Here's the smell of the blood still: all the perfumes of Arabia will not sweeten this little hand.' What does this reveal?",
+ options:["She has literally touched blood she cannot wash off","The guilt she suppressed in Act 2 has erupted in sleep — she cannot escape the sensory memory of the murder. The perfumes of Arabia represent all attempts to mask the reality of what she did, and they all fail","She is still planning more murders","She has developed a psychological cleaning compulsion unrelated to the murder"],
+ correct:1,
+ explanation:"'All the perfumes of Arabia' — an image of overwhelming abundance contrasted against 'this little hand'. No amount of perfume can cover guilt. This speech shows Lady Macbeth completely undone by the crime she once managed with such cold efficiency."},
+
+{type:"fill",theme:"Lady Macbeth",
+ question:"Complete Lady Macbeth's famous sleepwalking line.",
+ quote:"'Out, ___ spot! Out, I say!'",
+ correctAnswers:["damned","Damned"],display:"damned",
+ explanation:"'Damned' carries full theological weight — she is literally damned, condemned by her actions. The spot of blood that won't wash off is guilt made physical. She who once said 'a little water clears us of this deed' now cannot wash her hands clean in her sleep."},
+
+{type:"mc",theme:"Lady Macbeth",
+ question:"Lady Macbeth's line 'I have given suck, and know how tender 'tis to love the babe that milks me' — and then her willingness to murder — reveals what about her character?",
+ options:["She has no maternal instincts at all","She is not without feeling — she is actively suppressing emotions she knows she has. This makes her choice to commit murder more deliberate and more psychologically complex than simple cruelty","She had a child who died and this has made her bitter","She is comparing Duncan to a baby"],
+ correct:1,
+ explanation:"This is the key to understanding Lady Macbeth. She is not a monster by nature — she has maternal feeling and explicitly invokes it. She then says she would dash a baby's brains out to achieve her goal. The horror is not absence of feeling but the suppression of it."},
+
+{type:"mc",theme:"Lady Macbeth",
+ question:"How does Lady Macbeth's role change between Act 1-2 and Act 3-5?",
+ options:["She becomes more powerful throughout","She starts as the dominant partner who drives the murder, but progressively loses control as Macbeth acts independently and guilt overwhelms her — ending in madness and suicide","She remains equally powerful throughout","She deliberately withdraws from the plot to protect herself"],
+ correct:1,
+ explanation:"The power shift is stark. In Acts 1-2, Lady Macbeth controls everything. By Act 3, Macbeth plans Banquo's murder without telling her. By Act 5, she is sleepwalking and incoherent. Power drained from her to Macbeth — but guilt destroyed them both."},
+
+{type:"mc",theme:"Lady Macbeth",
+ question:"Which of these best describes the theme of Lady Macbeth in terms of Jacobean gender expectations?",
+ options:["She simply confirms Jacobean views that women are dangerous","She subverts Jacobean expectations by being dominant and strategic, but ultimately confirms them by being the first to break psychologically — Shakespeare presents her collapse as both inevitable and gendered","She is presented as entirely equal to men throughout","Jacobean gender expectations are irrelevant to understanding her"],
+ correct:1,
+ explanation:"Shakespeare plays both sides. Lady Macbeth breaks Jacobean norms (women as passive, nurturing) through her dominance and cold strategy. But she is also the first to be destroyed by guilt — which could be read as Shakespeare confirming that women cannot sustain the rejection of their 'nature'."},
+
+{type:"mc",theme:"Lady Macbeth",
+ question:"Lady Macbeth says 'I fear thy nature; it is too full o' the milk of human kindness.' What does this tell us about how she sees Macbeth at this point?",
+ options:["She thinks he is weak and incapable","She sees him as too morally good to commit murder without her help — she recognises his ambition but doubts his ruthlessness. This is why she needs to manipulate him","She is expressing genuine affection","She thinks he is too kind to be king"],
+ correct:1,
+ explanation:"'Milk of human kindness' is not simple weakness — it's moral goodness. Lady Macbeth sees that Macbeth has ambition but also conscience. She understands that conscience will stop him, and she sees her role as removing that obstacle. This is a sophisticated psychological reading of her husband."},
+
+{type:"mc",theme:"Lady Macbeth",
+ question:"When Lady Macbeth faints after Duncan's murder is discovered, scholars debate whether it is genuine or performed. Why does this ambiguity matter?",
+ options:["It doesn't really matter either way","If performed, it shows she is still in control and protecting Macbeth by diverting attention. If genuine, it shows the first crack of real guilt breaking through. Either way, it shows her complexity — Shakespeare deliberately leaves it unresolved","Shakespeare made a mistake in the staging","It is clearly genuine because she was shocked by the murder"],
+ correct:1,
+ explanation:"The ambiguity is the point. Shakespeare makes it impossible to know — and this reflects Lady Macbeth's fundamental complexity. She is simultaneously the coldest strategist in the play and the character most destroyed by guilt. Both things are true."},
+
+{type:"fill",theme:"Lady Macbeth",
+ question:"Complete Lady Macbeth's phrase showing she has invoked evil to harden herself against remorse.",
+ quote:"'Stop up the access and passage to ___'",
+ correctAnswers:["remorse","Remorse"],display:"remorse",
+ explanation:"She literally asks for her capacity for remorse to be blocked — to prevent conscience from reaching her heart. The terrible irony is that suppressing conscience doesn't destroy it: it stores it up, and it returns in Act 5 to destroy her completely."},
+
+{type:"mc",theme:"Lady Macbeth",
+ question:"Lady Macbeth calls Macbeth 'too full o' the milk of human kindness'. Why is 'milk' a particularly significant word choice here?",
+ options:["It suggests he is a baby","Milk is associated with maternal nurturing — the same word she uses when invoking spirits to take her 'milk for gall'. Both she and Macbeth are defined by their relationship to this nurturing quality: she suppresses it, he has too much of it","It is just a common expression","It suggests Macbeth is weak and feminine"],
+ correct:1,
+ explanation:"'Milk' appears twice: in describing Macbeth's excessive kindness, and when she asks spirits to take her milk for gall (bitterness). Shakespeare uses the same image to show the opposite ends of a moral spectrum — and Lady Macbeth's deliberate positioning at the cruel extreme."},
+
+// ── CONTEXT & STRUCTURE ── 
+
+{type:"mc",theme:"Context",
+ question:"Why did King James I's interest in witchcraft make the witches in Macbeth politically significant, not just dramatically effective?",
+ options:["James enjoyed theatrical spectacle and wanted more supernatural effects","James had written Daemonologie on witchcraft and presided over witch trials — Shakespeare was engaging directly with his patron's intellectual and political world, effectively flattering him","The witches were required by theatre convention","James wanted witches removed but Shakespeare kept them"],
+ correct:1,
+ explanation:"James I was genuinely obsessed with witchcraft — he wrote books about it and attended witch trials. By making witches central to Macbeth, Shakespeare was engaging his patron's worldview. The play also reinforces James's belief in the Divine Right of Kings, which he was anxious to protect after assassination plots."},
+
+{type:"mc",theme:"Context",
+ question:"What is the significance of Macbeth being performed for King James I, who had survived the Gunpowder Plot (1605)?",
+ options:["It's merely a coincidence of timing","The Gunpowder Plot was an attempt to kill a king — Macbeth's central crime is killing a king. By staging this play showing regicide's catastrophic consequences, Shakespeare was effectively sending a political message supporting royal authority","James demanded a play about assassination","Shakespeare was commenting critically on James's response to the plot"],
+ correct:1,
+ explanation:"The Gunpowder Plot (1605) attempted to blow up Parliament and kill James I. Macbeth (1606) dramatises the catastrophic consequences of killing a king and the restoration of rightful order. The political message — support the king, don't murder him — was timely and pointed."},
+
+{type:"mc",theme:"Structure",
+ question:"Macbeth is one of Shakespeare's shortest tragedies. How does this brevity serve the play's themes?",
+ options:["Shakespeare ran out of material","The fast pace mirrors Macbeth's own impulsive, rapid descent — there is no time for reflection, just as Macbeth increasingly acts without reflection","Short plays were fashionable in 1606","Shakespeare was paid by the scene and kept it short"],
+ correct:1,
+ explanation:"The structural compression is thematically meaningful. Act 5 in particular moves at breakneck speed — short scenes, constant movement, no pause for breath. This mirrors Macbeth's own progression from the reflective man of Act 1 to the impulsive tyrant of Act 5."},
+
+]
 },
+
+// ───────────────────────────────────────────────────────────────
 acc:{
   title:"A Christmas Carol",color:"acc",
   questions:[
-    {theme:"Poverty",question:"When Scrooge says the poor 'had better do it and decrease the surplus population', what is Dickens doing?",options:["Showing Scrooge is correct about overpopulation","Presenting real Victorian attitudes to expose how morally bankrupt they are","Suggesting Scrooge means no real harm","Praising the workhouse system"],correct:1,explanation:"This was a real attitude held by wealthy Victorians. Dickens puts it in Scrooge's mouth so readers recognise — and are appalled by — attitudes they may have shared. The Ghost quotes it back to him in Stave 3."},
-    {theme:"Redemption",question:"What does Marley mean by 'I wear the chain I forged in life'?",options:["He is imprisoned by literal iron chains","His greed has become a physical punishment — a symbolic chain of his sins","He is warning about a specific danger","He regrets becoming a businessman"],correct:1,explanation:"Allegory. The chain of 'cash-boxes, keys, padlocks, ledgers' represents every selfish act. Greed imprisons you even in death. And it shows Scrooge exactly what his future looks like if he doesn't change."},
-    {theme:"Supernatural",question:"Why does Dickens show Ignorance and Want as children beneath the Ghost's robe?",options:["To make the ghost more dramatic","To show children are naturally ignorant","To give abstract social problems a human face — children are the most destroyed by them","To suggest Christmas is only for children"],correct:2,explanation:"Anthropomorphism — making abstractions human. Dickens chose children because they're the most vulnerable victims of poverty and ignorance. The real monsters aren't ghosts."},
-    {theme:"Poverty",question:"The Cratchits are poor but joyful. What is Dickens arguing through this contrast with Scrooge?",options:["That poverty is fine if you have a good attitude","That wealth doesn't produce happiness — love and community matter more","That the Cratchits are naive","That poor people should be content with their lot"],correct:1,explanation:"Dickens deliberately inverts the Victorian assumption: wealth = virtue = happiness. Scrooge has everything and feels nothing. The Cratchits have almost nothing and celebrate fiercely."},
-    {theme:"Redemption",question:"Why is the Ghost of Christmas Yet to Come completely silent throughout Stave 4?",options:["Dickens forgot to write dialogue for it","It represents death — silence is more terrifying than any words","It can only communicate through visions","Scrooge talks too much"],correct:1,explanation:"'Phantom slowly, gravely, silently approached.' Three adverbs. Silence represents the finality of death — nothing left to say. Forces Scrooge to face his legacy without comfort or excuse."},
-    {theme:"Context",question:"Why did Dickens write a story rather than the political pamphlet he'd originally planned?",options:["His publisher refused","Stories were cheaper","Emotion changes minds that facts cannot — a dying child moves people more than poverty statistics","He didn't know enough about politics"],correct:2,explanation:"Dickens understood people protect themselves from uncomfortable facts but open their hearts to stories. A tale about Tiny Tim reaches feelings that an argument about the Poor Law cannot."},
-    {theme:"Poverty",question:"Which description captures how Dickens presents Scrooge's greed in Stave 1?",options:['"Cold, hard, miserly, bitter, old"','"Squeezing, wrenching, grasping, scraping, clutching, covetous old sinner"','"Solitary as an oyster, secretive and self-contained"','"Hard and sharp as flint"'],correct:1,explanation:"Six verbs stacked together — the accumulation mirrors the accumulation of wealth. All taking, no giving. The physical violence of the verbs makes greed feel aggressive and relentless."},
-    {theme:"Redemption",question:"Which moment marks the emotional turning point of Scrooge's redemption in Stave 3?",options:['"I wear the chain I forged in life"','"Marley was dead, to begin with"','"Scrooge hung his head to hear his own words quoted by the Spirit, and was overcome with penitence and grief"','"His own heart laughed"'],correct:2,explanation:"The hinge moment. His own cruel words about the poor are thrown back when Tiny Tim's fate is discussed. He cannot escape his cruelty when confronted with its human consequence. Self-awareness begins redemption."},
-    {theme:"Redemption",question:"'Light as a feather… happy as an angel… merry as a schoolboy.' What technique is Dickens using?",options:["Metaphor","Three similes showing the physical liberation that generosity brings","Hyperbole for comic effect","Alliteration"],correct:1,explanation:"Three rapid similes mirror how Scrooge feels — freed, light, young again. Total contrast with the cold description of him in Stave 1. Redemption is physical liberation, not just moral change."},
-    {theme:"Redemption",question:"Complete Marley's warning: 'I wear the chain I ___ in life'",options:["forged","built","earned","made"],correct:0,explanation:"'Forged' — he made it himself, link by link. Every selfish act was a choice. This tells Scrooge he still has agency — he can avoid this fate, but only through active change."},
-    {theme:"Poverty",question:"Complete Scrooge's description: 'secret, and self-contained, and ___ as an oyster'",options:["solitary","bitter","cold","shut"],correct:0,explanation:"'Solitary as an oyster' — sealed shut, reclusive, hard on the outside. Oysters also protect something valuable within — Scrooge is not beyond redemption, but he has sealed himself off from human connection."},
-    {theme:"Supernatural",question:"The Ghost of Christmas Present reveals two starved children. What are their names?",options:["Poverty and Greed","Ignorance and Want","Hunger and Darkness","Sin and Shame"],correct:1,explanation:"Ignorance and Want. The Ghost warns most about Ignorance — a society that refuses to see poverty creates the conditions for its own destruction."},
-    {theme:"Context",question:"What was the 'New Poor Law' of 1834, and why does it matter for the novella?",options:["A law giving poor people money — Dickens approved","A law forcing the unemployed into deliberately harsh workhouses — Dickens opposed it his whole life","A law banning child labour","A law creating public schools"],correct:1,explanation:"The Poor Law Amendment Act forced anyone needing support into brutal workhouses. Dickens had worked in a factory as a child. Scrooge's attitude directly echoes this law."},
-    {theme:"Structure",question:"Why does Dickens call the chapters 'Staves' instead of chapters?",options:["It was a standard Victorian convention","A stave is a verse in a carol — the book is structured like a Christmas song, moving from darkness to light","Dickens wanted it to seem longer","He borrowed the term from Shakespeare"],correct:1,explanation:"The title is completely literal. A carol = a Christmas song. A stave = a verse. Five staves, moving from cold isolation to joyful community. A deliberate, musical structure."},
-    {theme:"Poverty",question:"Tiny Tim says 'God bless us, every one!' Why is this significant given the novella's themes?",options:["It shows religion makes poverty tolerable","It ironically highlights that God has not blessed people equally — Tim will die unless the wealthy choose to act","Poor children are more religious than rich ones","Tiny Tim has peacefully accepted his fate"],correct:1,explanation:"Simultaneously moving and damning. 'Every one' is not the reality — Tim is dying because Scrooge pays poverty wages. The phrase puts the moral burden squarely on the wealthy reader."}
-  ]
+
+// ── SUPERNATURAL ── 14 questions ─────────────────────────────
+
+{type:"mc",theme:"Supernatural",
+ question:"Marley's chain is described as made of 'cash-boxes, keys, padlocks, ledgers, deeds, and heavy purses'. Why are these objects significant?",
+ options:["They are random objects that look frightening","They are all objects associated with Marley's business and greed — his sins have literally become his punishment. The tools of his wealth are the instruments of his eternal torment","They represent the things Scrooge will inherit","They are symbols of Victorian commerce generally"],
+ correct:1,
+ explanation:"The chain is one of Dickens's most powerful allegorical images. Every object is a tool of Marley's greed — ledgers for tracking debts, cash-boxes for storing wealth, padlocks for protecting it. His sins are not abstract: they are made from the very materials of his selfish life."},
+
+{type:"fill",theme:"Supernatural",
+ question:"Complete Marley's key line about his punishment.",
+ quote:"'I wear the chain I ___ in life'",
+ correctAnswers:["forged","Forged"],display:"forged",
+ explanation:"'Forged' — he made it himself, link by link. This is crucial: Marley's punishment is entirely his own creation. Every selfish act added a link. Dickens is arguing that our choices in life literally shape what we become — and what we suffer."},
+
+{type:"mc",theme:"Supernatural",
+ question:"Why does Dickens describe the Ghost of Christmas Past as 'like a child: yet not so like a child as like an old man'?",
+ options:["Because ghosts are ageless and this reflects their supernatural nature","The contradiction reflects the nature of memory itself — Scrooge's past is simultaneously young (his innocent childhood) and old (long gone). The ghost embodies time's paradox","Dickens wanted to make the ghost seem strange","The ghost represents both past and future simultaneously"],
+ correct:1,
+ explanation:"This is Dickens using supernatural description to carry psychological meaning. Memory is both vivid and distant, both young and ancient. The Ghost of Christmas Past is literally what memory looks like — paradoxically young and old at once."},
+
+{type:"mc",theme:"Supernatural",
+ question:"Why does Dickens present the Ghost of Christmas Present as a jolly, generous giant — almost Father Christmas-like?",
+ options:["To contrast with the sinister witches in other ghost stories","The ghost represents abundance, generosity, and communal celebration — the opposite of Scrooge's hoarding. Its appearance embodies the argument Dickens is making about what Christmas should mean","Dickens was describing a traditional British ghost","The ghost needs to seem non-threatening to gain Scrooge's trust"],
+ correct:1,
+ explanation:"The Ghost of Christmas Present is a visual argument. Its enormous generosity, its cornucopia of food, its cheery voice — all of this embodies what Dickens believes wealth should look like when used well: shared, warm, abundant. It is the anti-Scrooge."},
+
+{type:"mc",theme:"Supernatural",
+ question:"Ignorance and Want are presented as starved children beneath the Ghost of Christmas Present's robe. What makes this a more effective device than simply describing poverty statistics?",
+ options:["Children are more dramatic than numbers","Abstract social problems (ignorance of the poor, the poverty they suffer) are given vulnerable human form — Dickens makes it impossible to remain intellectually detached. A starved child provokes emotion in a way that economic data cannot","It's a traditional way to represent poverty in Victorian literature","Children are easier for the reader to understand"],
+ correct:1,
+ explanation:"This is precisely why Dickens chose a story over a pamphlet. Abstract injustice can be rationalised away. A starved child cannot. By personifying Ignorance and Want as children, he forces readers to feel the human cost of their indifference."},
+
+{type:"fill",theme:"Supernatural",
+ question:"Complete the Ghost of Christmas Present's warning about the greater danger.",
+ quote:"'Beware them both… but most of all beware this boy' — his name is ___",
+ correctAnswers:["ignorance","Ignorance"],display:"Ignorance",
+ explanation:"Ignorance is the greater danger because it is the cause, and Want is the symptom. A society that chooses not to see poverty creates the conditions for its own destruction. Dickens is warning that wilful blindness to injustice is more dangerous than the injustice itself."},
+
+{type:"mc",theme:"Supernatural",
+ question:"Why does the Ghost of Christmas Yet to Come never speak?",
+ options:["Dickens couldn't think of appropriate dialogue","Silence represents the absolute finality of death — there is nothing to say, no argument to make, no comfort to offer. The ghost shows Scrooge his future without words because words would give him something to argue with","The ghost communicates only through visions","Dickens wanted to distinguish it from the other two ghosts"],
+ correct:1,
+ explanation:"Three adverbs describe its approach: 'slowly, gravely, silently'. The silence is terrifying because Scrooge cannot engage with it — he cannot argue, negotiate, or explain. Death offers no dialogue. The ghost simply shows and points."},
+
+{type:"mc",theme:"Supernatural",
+ question:"How does Marley's appearance function differently from traditional horror-story ghosts?",
+ options:["Marley is less frightening than traditional ghosts","Marley doesn't come to frighten — he comes to educate and warn. He is a moral agent rather than a menacing presence. This is Dickens using the ghost story format to carry a social message rather than simply to entertain","Marley appears because Scrooge summoned him","Dickens was unable to write a genuinely frightening ghost"],
+ correct:1,
+ explanation:"Marley's ghost subverts genre expectations. Victorian readers loved ghost stories for the fear — but Dickens uses the form for something different. Marley's purpose is entirely moral: he is Scrooge's last chance at redemption, sent as a warning, not as punishment."},
+
+{type:"mc",theme:"Supernatural",
+ question:"Why does the Ghost of Christmas Past show Scrooge his lonely childhood boarding school as the first vision?",
+ options:["Because it was the most frightening of his memories","Scrooge must understand where his isolation began — seeing his lonely childhood self helps establish sympathy for him while also showing the root of his emotional withdrawal from society","To remind Scrooge of the education he wasted","Because Dickens wanted to show Victorian boarding schools"],
+ correct:1,
+ explanation:"The childhood vision does double work: it creates sympathy for Scrooge (he was abandoned, lonely, left at school while others went home) and shows the origin of his emotional withdrawal. His isolation as an adult has its roots in the isolation of childhood."},
+
+{type:"mc",theme:"Supernatural",
+ question:"The novella's chapters are called Staves rather than chapters. Why is this structurally significant?",
+ options:["It was a common Victorian publishing convention","A stave is a verse of a carol — the novella is literally structured like a Christmas song, moving from darkness to light, from isolation to community. The form embodies the content","Dickens wanted to seem original","Staves are longer than normal chapters"],
+ correct:1,
+ explanation:"'A Christmas Carol' is not just a title — it's a structural blueprint. A carol moves through verses to a joyful resolution. The novella does the same: five staves, progressing from Scrooge's cold isolation through supernatural education to warm redemption. The form is the argument."},
+
+{type:"mc",theme:"Supernatural",
+ question:"How does the Ghost of Christmas Yet to Come differ from the other two ghosts in terms of what it shows Scrooge?",
+ options:["It shows him pleasant visions of the future","Unlike the other ghosts which show him the past and present with some warmth, the final ghost shows only the bleak future that awaits if he doesn't change — fear where the others used memory and empathy","It shows him both pleasant and unpleasant futures","It shows him other people's futures rather than his own"],
+ correct:1,
+ explanation:"The three ghosts use different emotional registers. The past ghost uses memory and nostalgia. The present ghost uses empathy and warmth (the Cratchits). The future ghost uses fear — the final tool. Dickens understood that different emotions unlock different kinds of change."},
+
+{type:"fill",theme:"Supernatural",
+ question:"Complete the description of the Ghost of Christmas Yet to Come's approach.",
+ quote:"'Phantom slowly, ___, silently, approached'",
+ correctAnswers:["gravely","Gravely"],display:"gravely",
+ explanation:"Three adverbs: slowly, gravely, silently. The ghost's terrible authority comes from its complete absence of haste or words. It knows what it shows is inevitable — unless Scrooge acts. The gravity is the gravity of death itself."},
+
+{type:"mc",theme:"Supernatural",
+ question:"What is the significance of the people stealing Scrooge's belongings — including the curtains from his deathbed — in the Ghost of Christmas Yet to Come's vision?",
+ options:["It shows that poverty makes people criminal","It shows the ultimate consequence of Scrooge's isolation — he dies unloved and unmourned, and even his physical possessions mean more to strangers than his life meant to anyone. His death is a relief, not a loss","The thieves are punished later in the story","It shows how poor Victorian servants were"],
+ correct:1,
+ explanation:"The deathbed scene is Dickens at his most savage. People steal from Scrooge's corpse while it's still warm — and feel no guilt, because he showed no care in life. This is the ultimate result of his philosophy: if he values others only as economic units, they value him only as a source of goods."},
+
+{type:"mc",theme:"Supernatural",
+ question:"When Scrooge first sees Marley's face in his door-knocker, why does Dickens have him immediately rationalise it away as indigestion?",
+ options:["To show Scrooge has poor eyesight","To show Scrooge's materialism — a man who believes only in money and facts cannot accept supernatural intervention without an economic or physical explanation. His scepticism is itself a symptom of what's wrong with him","Marley's ghost was not yet fully formed","To make the subsequent haunting more frightening by contrast"],
+ correct:1,
+ explanation:"Scrooge famously says 'There's more of gravy than of grave about you.' He literally attributes a supernatural vision to bad digestion. This is Dickens showing his materialism in action — everything must have a rational, physical explanation. The supernatural forces him to abandon this safe framework."},
+
+// ── POVERTY ── 18 questions ───────────────────────────────────
+
+{type:"mc",theme:"Poverty",
+ question:"'If they would rather die, they had better do it and decrease the surplus population.' This attitude reflects a real Victorian economic theory. What was it?",
+ options:["Mercantilism — the idea that national wealth requires population growth","Malthusian theory — the idea that population growth outpaced food production, making the deaths of the poor economically beneficial for society","Laissez-faire capitalism — letting the market decide everything","Social Darwinism — survival of the economically fittest"],
+ correct:1,
+ explanation:"Thomas Malthus argued that population would always outgrow food supply, making poverty inevitable and even necessary. This gave wealthy Victorians an intellectual justification for indifference to the poor. Dickens puts this language ('surplus population') in Scrooge's mouth to expose its moral bankruptcy."},
+
+{type:"fill",theme:"Poverty",
+ question:"Complete Scrooge's infamous dismissal of the poor.",
+ quote:"'If they would rather die, they had better do it, and decrease the ___ population'",
+ correctAnswers:["surplus","Surplus"],display:"surplus",
+ explanation:"'Surplus' — treating human beings as an economic excess. This language dehumanises the poor by reducing them to an economic burden. Dickens uses it to show how Victorian ideology enabled cruelty by replacing moral thinking with economic calculation."},
+
+{type:"mc",theme:"Poverty",
+ question:"Why does Dickens describe the opening of the novella's London as 'cold, bleak, biting' with a 'foggy, frosty air'?",
+ options:["He was simply describing typical London winter weather","The cold reflects Scrooge's moral temperature — the physical environment mirrors his emotional and spiritual state. The city is as cold as the man who moves through it","To create atmosphere for the ghost story","Victorian London genuinely felt this way"],
+ correct:1,
+ explanation:"Dickens uses the pathetic fallacy — the environment reflects inner states. Scrooge's London is cold, dark, foggy. By the end of the novella, on Christmas morning, it is bright and clear. The weather tracks the moral temperature of the story."},
+
+{type:"mc",theme:"Poverty",
+ question:"Six verbs are stacked in a row to describe Scrooge: 'squeezing, wrenching, grasping, scraping, clutching, covetous.' What effect does this accumulation create?",
+ options:["It makes the description easier to remember","The accumulation of verbs mirrors the accumulation of wealth — relentless, all-consuming, never satisfied. The violence of the verbs (wrenching, grasping) makes his greed feel aggressive rather than passive","It makes the description sound like poetry","It shows Dickens was angry when he wrote it"],
+ correct:1,
+ explanation:"The list of six verbs is itself an image of greed — piling up, never enough. Each verb is physical and aggressive: you don't passively accumulate, you squeeze, wrench, grasp. This is Dickens showing greed as an active, violent force, not just an absence of generosity."},
+
+{type:"fill",theme:"Poverty",
+ question:"Complete the simile describing Scrooge's isolation.",
+ quote:"'secret, and self-contained, and ___ as an oyster'",
+ correctAnswers:["solitary","Solitary"],display:"solitary",
+ explanation:"'Solitary as an oyster' — sealed shut, reclusive, hard exterior protecting something potentially valuable within. The simile suggests Scrooge is not beyond redemption: like an oyster there is something good inside. But he has sealed himself off entirely from human connection."},
+
+{type:"mc",theme:"Poverty",
+ question:"Bob Cratchit earns fifteen shillings a week. Dickens writes 'Bob had but fifteen Bob a week himself.' What makes this observation both painful and witty?",
+ options:["It's just a coincidence that his name matches the coin","It's dark wordplay: a man's identity is literally reduced to his wage. He is worth, in Scrooge's economic world, exactly fifteen shillings — the same as his name. Dickens uses wit to make the exploitation more pointed, not less painful","Dickens is celebrating Bob's reliability","Bob is actually well-paid for his era"],
+ correct:1,
+ explanation:"The pun on 'Bob' (both name and slang for a shilling) collapses identity into economic value. In Scrooge's world, that's all Bob is — a unit of labour worth fifteen shillings. Dickens's wit makes this devastating: he uses humour to sharpen a moral argument."},
+
+{type:"mc",theme:"Poverty",
+ question:"The Cratchit family's Christmas dinner is small by wealthy standards, yet Dickens describes it with warmth and abundance. What argument is he making?",
+ options:["Poverty is acceptable if you have a positive attitude","The Cratchits demonstrate that happiness comes from love and community, not material wealth — and that the poor are not poor because of laziness or bad character but because of economic injustice","Dickens was romanticising poverty","Christmas makes everyone feel rich"],
+ correct:1,
+ explanation:"The Cratchit Christmas is Dickens's counter-argument to Victorian attitudes. They have almost nothing, yet they celebrate with genuine joy and warmth. Scrooge has vast wealth and is utterly miserable. Dickens is inverting the equation: virtue and happiness don't require wealth."},
+
+{type:"mc",theme:"Poverty",
+ question:"Why does the Ghost of Christmas Present sprinkle incense on the food of poor people in the streets?",
+ options:["It's a Christmas tradition Dickens invented","The ghost blesses the meals of those who cannot afford much — suggesting that the poor deserve divine generosity that human society denies them. It's a pointed contrast with Scrooge's attitude","The incense is used to preserve food in winter","The ghost is performing a magical ritual"],
+ correct:1,
+ explanation:"This quiet moment is thematically loaded. The ghost — who represents Christmas generosity — specifically blesses the poor, not the rich. Dickens is showing what the spirit of Christmas actually means: care for those with least, not celebration by those with most."},
+
+{type:"mc",theme:"Poverty",
+ question:"What was the Poor Law Amendment Act of 1834, and how does it directly shape Scrooge's attitudes?",
+ options:["A law that provided generous welfare support for the poor","A law that forced anyone needing support into deliberately harsh workhouses — Scrooge's suggestion that the poor should 'go to the workhouses' directly echoes the ideology behind this law","A law that banned child labour","A Victorian welfare programme that Dickens supported"],
+ correct:1,
+ explanation:"The 1834 Poor Law made workhouses the only legal form of poverty relief — and designed them to be as harsh as possible to 'discourage laziness'. When Scrooge says the poor should go to workhouses, he is speaking in perfect alignment with this law. Dickens is attacking the ideology, not just the man."},
+
+{type:"mc",theme:"Poverty",
+ question:"Tiny Tim says 'God bless us, every one!' at the end of the Cratchit Christmas. Why is this phrase both moving and politically charged?",
+ options:["It's a traditional Christmas blessing with no deeper meaning","It's moving because Tim is so vulnerable and generous-spirited. It's politically charged because God has clearly not blessed everyone equally — Tim is dying, not because God abandoned him, but because Scrooge's wages make his medical care impossible","Dickens included it to make the scene feel festive","Tim is being ironic about Victorian society"],
+ correct:1,
+ explanation:"The phrase simultaneously shows Tim's uncomplicated goodness and exposes the hypocrisy of a Christian society that allows children like him to die of preventable poverty. 'Every one' is aspirational, not descriptive — and Dickens knows his readers understand the gap between the prayer and the reality."},
+
+{type:"fill",theme:"Poverty",
+ question:"Complete the description of Bob Cratchit's careful preparation for Christmas despite poverty.",
+ quote:"'His threadbare clothes darned up and brushed, to look ___'",
+ correctAnswers:["seasonable","Seasonable"],display:"seasonable",
+ explanation:"'Seasonable' — appropriate to the season. Bob takes care with what little he has. This single detail demolishes the 'lazy poor' myth: he is dignified, careful, making effort. Dickens presents poverty as a condition of injustice, not character."},
+
+{type:"mc",theme:"Poverty",
+ question:"Why does Dickens contrast Fred's generous Christmas party with Scrooge's cold office on the same Christmas Eve?",
+ options:["To show that Fred is richer than Scrooge","Fred's warmth despite limited means shows that generosity is a choice, not a product of wealth — the contrast makes Scrooge's miserliness indefensible. Fred chooses generosity; Scrooge, with far more, chooses isolation","To show that Scrooge's family don't care about him","To demonstrate typical Victorian class differences"],
+ correct:1,
+ explanation:"Fred is not significantly wealthier than his uncle — but he gives abundantly. Scrooge has vast wealth and gives nothing. The contrast destroys any argument that generosity requires means: Fred is the refutation. Scrooge is simply choosing meanness."},
+
+{type:"mc",theme:"Poverty",
+ question:"When Scrooge asks whether there are no prisons and no workhouses, the two collectors reply 'many cannot go there'. What does this reveal?",
+ options:["Victorian prisons were at capacity","The workhouse was so horrific that many poor people would rather starve than enter one — the very institution Scrooge sees as a solution is itself a form of punishment so severe that people prefer death. Scrooge's 'solution' is worse than the problem","The collectors are exaggerating to manipulate Scrooge","Prison was seen as more comfortable than the workhouse"],
+ correct:1,
+ explanation:"This exchange exposes the bankruptcy of Scrooge's position. He thinks the poor are provided for — but the 'provision' is so cruel that many prefer starvation. Dickens is showing that the Victorian system doesn't solve poverty; it punishes it."},
+
+{type:"mc",theme:"Poverty",
+ question:"Why does Dickens show Scrooge's old boss Fezziwig throwing a generous Christmas party for all his employees?",
+ options:["To show that Scrooge had positive role models he chose to ignore","To contrast with Scrooge's treatment of Bob Cratchit and argue that employers have a moral responsibility to their workers — Fezziwig shows what good employment looks like","To create nostalgia for an earlier era","Fezziwig is simply a more loveable character than Scrooge"],
+ correct:1,
+ explanation:"Fezziwig is Dickens's model employer. He doesn't pay for the party because he has to — he does it because he understands his responsibility to the people who work for him. Scrooge watches this, is moved, and then returns to treating Bob Cratchit with cold indifference. The contrast is the argument."},
+
+{type:"fill",theme:"Poverty",
+ question:"Complete the line showing Scrooge's dehumanising attitude toward charity collectors.",
+ quote:"'Are there no ___? Are there no workhouses?'",
+ correctAnswers:["prisons","Prisons"],display:"prisons",
+ explanation:"'Are there no prisons?' — Scrooge's first response to the idea of helping the poor is to ask whether the penal and workhouse system isn't sufficient. He treats poverty as a law enforcement problem, not a human one. This is Dickens's precise attack on Victorian ideology."},
+
+{type:"mc",theme:"Poverty",
+ question:"How does the scene in Stave 4 where people pawn Scrooge's belongings link to the poverty theme?",
+ options:["It shows that Scrooge's possessions weren't very valuable","It shows how poverty drives people to exploit whatever they can — including a dead man's curtains. But more importantly, it shows Scrooge as the cause of the poverty he was so indifferent to: he paid starvation wages, so his servants had to steal to survive","It is simply a Gothic detail to make the story scarier","The servants are punished for their theft"],
+ correct:1,
+ explanation:"The theft is the logical conclusion of Scrooge's own economic philosophy. He treated people as economic units; in death, they treat him as an economic resource. The scene is not just dark — it's the circular justice of his own values applied to him."},
+
+{type:"mc",theme:"Poverty",
+ question:"Why does Dickens set the novella at Christmas specifically, rather than at any other time of year?",
+ options:["Ghost stories were traditionally told at Christmas in Victorian England","Christmas was the season most explicitly associated with Christian charity, communal celebration, and generosity — setting the story at Christmas makes Scrooge's miserliness most morally stark and his redemption most symbolically appropriate","The plot required darkness and cold weather","Dickens published it in December for commercial reasons"],
+ correct:1,
+ explanation:"Christmas is the season that most explicitly demands the values Scrooge lacks: generosity, community, joy. By setting the story here, Dickens makes the contrast between what Christmas should be and what Scrooge makes it as sharp as possible. The festival is also a social leveller — all are meant to celebrate together."},
+
+{type:"mc",theme:"Poverty",
+ question:"Dickens originally planned to write a political pamphlet about poverty called 'An Appeal to the People of England on Behalf of the Poor Man's Child'. Why did he write a story instead?",
+ options:["He wasn't confident enough to write non-fiction","He understood that emotional engagement changes minds in ways that political argument cannot — a story about Tiny Tim and the Cratchits would move readers who would dismiss a pamphlet about the Poor Law","His publisher refused the pamphlet","He had already written too many pamphlets"],
+ correct:1,
+ explanation:"This was a conscious artistic and political choice. Dickens understood that facts can be ignored, statistics can be disputed, arguments can be deflected — but a story about a child who might die produces feeling that cannot be argued away. He chose the form that would be most effective."},
+
+// ── REDEMPTION ── 14 questions ────────────────────────────────
+
+{type:"mc",theme:"Redemption",
+ question:"Marley tells Scrooge: 'You have yet a chance and hope of escaping my fate.' Why is this line the foundation of the entire novella?",
+ options:["It introduces the plot device of the three ghosts","It establishes that redemption is possible — but only as a chance, not a guarantee. Scrooge must actively choose to change. Marley represents what happens without that choice, making the alternative vivid and terrifying","It shows Marley regrets his own life","It suggests Scrooge will automatically be redeemed"],
+ correct:1,
+ explanation:"The word 'chance' is crucial — redemption is available but not automatic. Dickens is making a moral argument: people can change, but they must choose to. The entire novella is built on this premise. Marley is the warning; the three ghosts are the opportunity."},
+
+{type:"fill",theme:"Redemption",
+ question:"Complete Marley's warning about the purpose of his visit.",
+ quote:"'You have yet a chance and hope of escaping my ___'",
+ correctAnswers:["fate","Fate"],display:"fate",
+ explanation:"'Escaping my fate' — Marley's fate is eternal wandering, burdened by chains of his own making. He is offering Scrooge a chance to avoid this, but cannot do the work for him. Redemption must be chosen and acted upon."},
+
+{type:"mc",theme:"Redemption",
+ question:"Why does Scrooge begin to change during Stave 2 (Ghost of Christmas Past) when visiting Fezziwig's party?",
+ options:["He is surprised Fezziwig could afford such a party","He remembers what it felt like to be genuinely happy in community — and begins to see his own treatment of Bob Cratchit in contrast to how Fezziwig treated him. Memory produces empathy","He is nostalgic for his youth generally","Fezziwig tells him directly to change his ways"],
+ correct:1,
+ explanation:"The Fezziwig scene is where Scrooge's first real emotion stirs. He watches the generous employer he once had — and suddenly, unprompted, thinks about Bob Cratchit. This is the beginning of moral comparison: he starts to measure himself against a better standard."},
+
+{type:"mc",theme:"Redemption",
+ question:"The Ghost of Christmas Present quotes Scrooge's own words back to him: 'If he be like to die, he had better do it and decrease the surplus population.' Why is this the emotional turning point?",
+ options:["It shows the ghost has a good memory","When his abstract cruelty is applied to a specific child he has just come to care about — Tiny Tim — Scrooge cannot sustain his detachment. He is forced to confront the human consequences of his own philosophy","The ghost is being theatrical","Scrooge didn't remember saying this"],
+ correct:1,
+ explanation:"This is the pivot of the entire novella. Scrooge said these words about faceless poor people. Now they are applied to Tiny Tim, whom he has just watched play and heard laugh. The abstraction becomes personal. He 'hung his head' — shame has arrived."},
+
+{type:"fill",theme:"Redemption",
+ question:"Complete the key line describing Scrooge's shame when his own words are turned against him.",
+ quote:"'Scrooge hung his head to hear his own words quoted by the Spirit, and was overcome with ___ and grief'",
+ correctAnswers:["penitence","Penitence"],display:"penitence",
+ explanation:"'Penitence' — genuine remorse, not just embarrassment. This is the moment Scrooge begins his moral transformation. He is not just uncomfortable; he is ashamed. Shame at the right moment, for the right reason, is the beginning of change."},
+
+{type:"mc",theme:"Redemption",
+ question:"Why does Scrooge's redemption need to be expressed through action — buying a turkey, raising wages — rather than simply through feeling differently?",
+ options:["Dickens needed to tie up plot threads","Dickens's moral argument is that redemption requires action, not just feeling. A change of heart that produces no change in behaviour is useless to Bob Cratchit and Tiny Tim. Dickens insists on material, practical generosity","The actions make a better ending","Scrooge is demonstrating he has really changed by spending money"],
+ correct:1,
+ explanation:"This is essential to Dickens's social argument. He is not writing a story about a man who feels bad and then feels good. He is writing about a man who felt bad, changed his behaviour, and saved a child's life. Feeling isn't enough — action is the test."},
+
+{type:"mc",theme:"Redemption",
+ question:"'I am as light as a feather, I am as happy as an angel, I am as merry as a schoolboy.' Why does Dickens use three similes in rapid succession at the moment of Scrooge's transformation?",
+ options:["Dickens liked lists","The rapid accumulation of similes mirrors the sudden flood of liberation Scrooge feels — it is the opposite of the dense, heavy description of him in Stave 1. Speed and lightness replace weight and cold","It is a traditional way to describe joy","Dickens needed to make Scrooge likeable quickly"],
+ correct:1,
+ explanation:"In Stave 1, Dickens stacked six heavy verbs to describe Scrooge's greed. In Stave 5, he stacks three light similes to describe his joy. The structural echo is deliberate — the same technique, opposite effect. Weight versus lightness. Greed versus liberation."},
+
+{type:"fill",theme:"Redemption",
+ question:"Complete Scrooge's joyful declaration on Christmas morning.",
+ quote:"'I am as light as a feather, I am as happy as an angel, I am as ___ as a schoolboy'",
+ correctAnswers:["merry","Merry"],display:"merry",
+ explanation:"Three similes — feather, angel, schoolboy — each representing lightness, purity, and youth. Dickens is showing that redemption restores something that was lost: Scrooge feels young again because he has reconnected with the world he shut out."},
+
+{type:"mc",theme:"Redemption",
+ question:"What does 'His own heart laughed' — four words — achieve that a longer description could not?",
+ options:["It saves time in a story that is already long","The simplicity is the point — complex guilt required elaborate supernatural intervention. Liberation requires only four words. Dickens is showing that goodness is natural and simple; it was the suppression of it that was complicated and costly","Dickens ran out of space","It mirrors the simplicity of the Cratchits' joy"],
+ correct:1,
+ explanation:"The elegance of this line is everything. The entire novella has been about a complicated, defended, rationalized coldness. When it breaks, what replaces it is simple: his own heart laughs. Dickens argues that generosity is our natural state — cruelty requires the effort."},
+
+{type:"mc",theme:"Redemption",
+ question:"How does Scrooge's treatment of Bob Cratchit on the day after Christmas demonstrate the difference between genuine and superficial redemption?",
+ options:["He gives Bob a small Christmas bonus","He raises Bob's salary, offers to discuss his affairs, and promises to help his struggling family — practical, material change, not just warm feelings. Dickens shows redemption as structural change, not just emotional warmth","He apologises to Bob","He buys Tiny Tim better medicine"],
+ correct:1,
+ explanation:"Scrooge doesn't just have a nice conversation with Bob — he raises his wages and commits to ongoing support. This is Dickens insisting that genuine redemption produces structural economic change. Being nice is not enough. Paying fairly is the test."},
+
+{type:"mc",theme:"Redemption",
+ question:"Why does Dickens include the detail that Scrooge 'became as good a friend, as good a master, and as good a man, as the good old city knew'?",
+ options:["To show Scrooge is now perfect","'Good master' is the crucial phrase — Dickens is completing his economic argument. Scrooge's redemption makes him a good employer, not just a good person. The transformation must include how he exercises power over others","To wrap up the story quickly","To contrast with Marley's absence of friends"],
+ correct:1,
+ explanation:"'Good master' — this is the economic heart of Dickens's argument. Victorian society's problem was not a shortage of kind individuals, but of good masters — employers who treated workers fairly. Scrooge's full redemption includes how he uses his economic power."},
+
+{type:"mc",theme:"Redemption",
+ question:"Dickens concludes: 'It was always said of him, that he knew how to keep Christmas well, if any man alive possessed the knowledge.' What does 'keeping Christmas well' mean in the context of the novella's themes?",
+ options:["Having a big Christmas dinner","Living by the values of generosity, community and care for the poor throughout the year — not just on Christmas Day. Christmas is Dickens's shorthand for the social responsibility he is arguing for","Being religious at Christmas","Following Christmas traditions"],
+ correct:1,
+ explanation:"'Keeping Christmas well' is Dickens's shorthand for everything he has argued in the novella: generosity to the poor, warmth to one's community, care for the vulnerable. Scrooge doesn't just have a nice Christmas — he embodies Christmas as a permanent way of living."},
+
+{type:"mc",theme:"Redemption",
+ question:"The novella ends: 'God bless us, every one!' — Tiny Tim's phrase, given the last word. Why does Dickens structure it this way?",
+ options:["Because Tiny Tim is the most likeable character","Tiny Tim's phrase frames the story's moral: this is a blessing that should apply to everyone, including those Scrooge once dismissed as 'surplus'. The last word belongs to the most vulnerable character — who has survived because one man chose to change","For a happy, festive ending","To show that Christianity is the solution to poverty"],
+ correct:1,
+ explanation:"Giving the final line to Tiny Tim is a structural argument. He began as the figure most threatened by Scrooge's philosophy — a child who would die because his father earned poverty wages. He ends with a blessing that includes everyone. His survival IS the moral of the story."},
+
+{type:"fill",theme:"Redemption",
+ question:"Complete the simile Dickens uses to describe Scrooge's isolation in Stave 1 — which the redemption arc undoes.",
+ quote:"'Solitary as an ___'",
+ correctAnswers:["oyster","Oyster"],display:"oyster",
+ explanation:"'Solitary as an oyster' — hard-shelled, sealed shut, alone. But oysters also contain something valuable. Scrooge's redemption is about opening that shell — letting people in. By Stave 5 he has reconnected with Fred, befriended Bob Cratchit, and become part of the world he shut out."},
+
+// ── CONTEXT & STRUCTURE ── 4 questions ────────────────────────
+
+{type:"mc",theme:"Context",
+ question:"Dickens had worked in a boot-polish factory at age 12 while his father was imprisoned for debt. How does this biographical context affect our reading of the novella?",
+ options:["It explains why Dickens wrote about factories","He was not writing about poverty as an observer — he had lived it. His portrayal of Bob Cratchit, child labour, and the workhouse carries personal authority. Dickens knew from the inside what it felt like to be economically powerless","It made him resentful of all wealthy people","It explains the autobiographical elements of the Scrooge character"],
+ correct:1,
+ explanation:"Dickens's personal experience of poverty gives the novella its moral force. He is not a middle-class reformer theorising about the poor — he was one, briefly. Bob Cratchit's dignity and the harshness of the workhouse system are not observed details; they are remembered ones."},
+
+{type:"mc",theme:"Context",
+ question:"The novella was published in 1843, nine years after the 1834 Poor Law. Why is this timing significant?",
+ options:["Dickens needed nine years to write it","The Poor Law had been in operation long enough for its effects to be clear — child poverty, workhouse horrors, and the dehumanisation of the poor were documented realities by 1843. Dickens was responding to a demonstrably failing system, not a theoretical one","Victorian publishing conventions required long gaps","The timing is coincidental"],
+ correct:1,
+ explanation:"By 1843, the human cost of the Poor Law was undeniable. Dickens could point to real workhouses, real starving children, real families separated by the system. The novella is not speculative — it is a response to documented, ongoing injustice."},
+
+{type:"mc",theme:"Context",
+ question:"Why is it significant that the novella sold 6,000 copies within days of publication and went through multiple printings in 1843?",
+ options:["It made Dickens rich, which he used to fund charity","The immediate popularity showed that Dickens had correctly identified a broad public appetite for exactly this moral argument — it was not a niche political tract but a cultural moment. He reached the people he needed to reach","Victorian books always sold quickly","Dickens had a large pre-existing fanbase who bought anything he wrote"],
+ correct:1,
+ explanation:"The speed and scale of the novella's success matters: it meant Dickens's social argument reached the middle-class readers — the Scrooges of Victorian England — who most needed to hear it. A pamphlet would have reached radicals; a Christmas ghost story reached everyone."},
+
+{type:"mc",theme:"Structure",
+ question:"The novella begins 'Marley was dead, to begin with.' Why is this opening line so effective?",
+ options:["It is a conventional way to begin a Victorian ghost story","It immediately establishes the supernatural premise, wrongfoots the reader's expectations for a Christmas story, and introduces Marley as crucial without him being alive — Dickens hooks the reader and establishes the moral stakes in seven words","Dickens needed to explain Marley's absence quickly","It was required by the publisher to clarify the plot"],
+ correct:1,
+ explanation:"Seven words, enormous work. It tells us: this is a ghost story, Marley matters, something happened before our story begins, and Christmas and death are about to share a story. Dickens was a master of openings, and this is one of his best."}
+
+]
 }
+
 };
+
 
 // ─── STATE ───
 let currentQuiz=null,questions=[],qIndex=0,score=0,answered=false,userAnswers=[];
@@ -1137,29 +1801,67 @@ function renderQuestion(){
   const q=questions[qIndex];
   const color=currentQuiz.color;
   const total=questions.length;
+
   document.getElementById('q-counter').textContent='Question '+(qIndex+1)+' of '+total;
   document.getElementById('q-score-live').textContent='Score: '+score;
   document.getElementById('progress-fill').style.width=((qIndex/total)*100)+'%';
+
+  const isFill = q.type === 'fill';
   document.getElementById('q-meta').innerHTML=
-    '<span class="q-type-badge">Multiple choice</span>'+
+    '<span class="q-type-badge">'+( isFill ? 'Fill in the blank' : 'Multiple choice')+'</span>'+
     '<span class="q-theme-badge '+color+'-theme">'+q.theme+'</span>';
+
   document.getElementById('q-text').textContent=q.question;
+
   const qEl=document.getElementById('q-quote');
   if(q.quote){qEl.textContent=q.quote;qEl.className='q-quote '+color+'-q';qEl.style.display='block';}
   else{qEl.style.display='none';}
-  const correctText=q.options[q.correct];
-  const shuffled=shuffle(q.options);
-  const newCorrect=shuffled.indexOf(correctText);
-  q._shuffled=shuffled;q._newCorrect=newCorrect;
-  document.getElementById('q-body').innerHTML='<div class="options">'+
-    shuffled.map((opt,i)=>'<button class="opt-btn" onclick="answerMC(this,'+i+','+newCorrect+')">'+opt+'</button>').join('')+
-    '</div>';
+
+  const body=document.getElementById('q-body');
+
+  if(isFill){
+    body.innerHTML=
+      '<div class="fill-wrap">'+
+      '<input type="text" class="fill-input" id="fill-input" placeholder="Type your answer…" '+
+      'autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" '+
+      'onkeydown="if(event.keyCode===13)submitFill()">'+
+      '<button class="submit-btn '+color+'-btn" id="submit-btn" onclick="submitFill()">Check →</button>'+
+      '</div>';
+    setTimeout(()=>{const i=document.getElementById('fill-input');if(i)i.focus();},80);
+  } else {
+    const correctText=q.options[q.correct];
+    const shuffled=shuffle(q.options);
+    const newCorrect=shuffled.indexOf(correctText);
+    q._shuffled=shuffled;q._newCorrect=newCorrect;
+    body.innerHTML='<div class="options">'+
+      shuffled.map((opt,i)=>'<button class="opt-btn" onclick="answerMC(this,'+i+','+newCorrect+')">'
+        +opt+'</button>').join('')+'</div>';
+  }
+
   const fb=document.getElementById('feedback');
   fb.className='feedback';fb.style.display='none';
   const nb=document.getElementById('next-btn');
   nb.className='next-btn '+color+'-btn';
   nb.classList.remove('visible');
   nb.textContent=qIndex<questions.length-1?'Next Question →':'See Results →';
+}
+
+function submitFill(){
+  if(answered)return;
+  const input=document.getElementById('fill-input');
+  if(!input||!input.value.trim())return;
+  answered=true;
+  const q=questions[qIndex];
+  const val=input.value.trim();
+  const isCorrect=q.correctAnswers.some(a=>a.toLowerCase()===val.toLowerCase());
+  input.disabled=true;
+  input.classList.add(isCorrect?'correct':'wrong');
+  const sb=document.getElementById('submit-btn');
+  if(sb)sb.disabled=true;
+  if(isCorrect)score++;
+  userAnswers.push({question:q.question,quote:q.quote||null,userAnswer:val,
+    correctAnswer:q.display,isCorrect,explanation:q.explanation,type:'fill'});
+  showFeedback(isCorrect, q.explanation, isCorrect ? null : 'The answer was: "'+q.display+'"');
 }
 
 function answerMC(btn,selectedIdx,correctIdx){
@@ -1173,14 +1875,20 @@ function answerMC(btn,selectedIdx,correctIdx){
     else b.classList.add('dimmed');
   });
   if(isCorrect)score++;
-  userAnswers.push({question:q.question,userAnswer:q._shuffled[selectedIdx],correctAnswer:q._shuffled[correctIdx],isCorrect,explanation:q.explanation});
+  userAnswers.push({question:q.question,quote:q.quote||null,
+    userAnswer:q._shuffled[selectedIdx],correctAnswer:q._shuffled[correctIdx],
+    isCorrect,explanation:q.explanation,type:'mc'});
+  showFeedback(isCorrect, q.explanation, isCorrect ? null : 'Correct answer: '+q._shuffled[correctIdx]);
+}
+
+function showFeedback(isCorrect, explanation, hint){
   const fb=document.getElementById('feedback');
   fb.style.display='block';
   fb.className='feedback '+(isCorrect?'correct-fb':'wrong-fb');
   document.getElementById('fb-head').textContent=isCorrect?'✓ Correct!':'✗ Not quite';
-  document.getElementById('fb-body').textContent=q.explanation;
+  document.getElementById('fb-body').textContent=explanation;
   const ansEl=document.getElementById('fb-answer');
-  if(!isCorrect){ansEl.textContent='Correct answer: '+q._shuffled[correctIdx];ansEl.style.display='block';}
+  if(hint){ansEl.textContent=hint;ansEl.style.display='block';}
   else{ansEl.style.display='none';}
   document.getElementById('next-btn').classList.add('visible');
 }
@@ -1199,22 +1907,25 @@ function showResults(){
   document.getElementById('result-score').className='result-score-big '+color;
   document.getElementById('retry-btn').className='action-btn primary '+color;
   let msg='';
-  if(pct>=90)msg="Brilliant. You know this cold. Go get some sleep.";
-  else if(pct>=70)msg="Solid. A few gaps — check the ones you got wrong and you're golden.";
-  else if(pct>=50)msg="Getting there. Go back over the explanations, then try again.";
-  else msg="Don't panic — that's what this is for. Read the explanations, then run it again.";
+  if(pct>=90)msg="Exceptional. You genuinely know this. Go get some sleep.";
+  else if(pct>=80)msg="Really strong. A handful of gaps — check the ones you missed.";
+  else if(pct>=70)msg="Solid. You know the bones. Fill in the gaps and you're there.";
+  else if(pct>=55)msg="Getting there. Go back over the cram sheet, then hit it again.";
+  else msg="Don't panic — this quiz is designed to be hard. Read the explanations carefully, then run it again.";
   document.getElementById('result-message').textContent=msg;
-  document.getElementById('review-list').innerHTML=userAnswers.map((a,i)=>
-    '<div class="review-item">'+
+  document.getElementById('review-list').innerHTML=userAnswers.map((a,i)=>{
+    let qDisplay='<div class="review-q">'+(i+1)+'. '+a.question+'</div>';
+    if(a.quote) qDisplay+='<div class="review-quote">'+a.quote+'</div>';
+    return '<div class="review-item">'+
       '<div class="review-icon">'+(a.isCorrect?'✅':'❌')+'</div>'+
-      '<div style="flex:1">'+
-        '<div class="review-q">'+(i+1)+'. '+a.question+'</div>'+
-        '<div class="review-user '+(a.isCorrect?'correct':'wrong')+'">You: '+a.userAnswer+'</div>'+
-        (!a.isCorrect?'<div class="review-correct-ans">✓ '+a.correctAnswer+'</div>':'')+
-        '<div class="review-explanation">'+a.explanation+'</div>'+
+      '<div style="flex:1">'+qDisplay+
+      '<div class="review-user '+(a.isCorrect?'correct':'wrong')+'">'+
+        (a.type==='fill'?'You typed: ':'You chose: ')+a.userAnswer+'</div>'+
+      (!a.isCorrect?'<div class="review-correct-ans">✓ '+a.correctAnswer+'</div>':'')+
+      '<div class="review-explanation">'+a.explanation+'</div>'+
       '</div>'+
-    '</div>'
-  ).join('');
+    '</div>';
+  }).join('');
   showScreen('results');
 }
 
