@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Miles — GCSE English Revision Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mac: #c9a84c;
+  --mac-dark: #1a1a2e;
+  --mac-mid: #2d2d4e;
+  --acc: #4c9a4c;
+  --acc-dark: #1a2e1a;
+  --acc-mid: #2d4e2d;
+  --bg: #0f0f0f;
+  --surface: #1a1a1a;
+  --surface2: #242424;
+  --border: #333;
+  --text: #f0f0f0;
+  --muted: #888;
+  --correct: #4ade80;
+  --wrong: #f87171;
+  --radius: 10px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Barlow', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* ---- SCREENS ---- */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ---- LANDING ---- */
+#landing {
+  padding: 24px 20px 40px;
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--muted);
+  margin-bottom: 32px;
+  padding-top: 8px;
+}
+
+.hero-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(38px, 10vw, 64px);
+  text-transform: uppercase;
+  line-height: 0.95;
+  letter-spacing: -1px;
+  margin-bottom: 6px;
+}
+
+.hero-title .mac { color: var(--mac); }
+.hero-title .acc { color: var(--acc); }
+
+.hero-sub {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 32px;
+  letter-spacing: 0.5px;
+}
+
+/* Attempt counter */
+.attempt-strip {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.attempt-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.attempt-badge .count {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.attempt-badge.mac-badge .count { color: var(--mac); }
+.attempt-badge.acc-badge .count { color: var(--acc); }
+
+/* Approach section */
+.approach-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.approach-card h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.formula {
+  display: flex;
+  gap: 0;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.formula-step {
+  flex: 1;
+  text-align: center;
+  padding: 10px 4px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.formula-step:nth-child(1) { background: #2a1f0e; color: var(--mac); }
+.formula-step:nth-child(2) { background: #1e2a1e; color: var(--acc); }
+.formula-step:nth-child(3) { background: #2a1a1a; color: #f87171; }
+.formula-step:nth-child(4) { background: #1a1f2a; color: #60a5fa; }
+
+.approach-text {
+  font-size: 13px;
+  color: #bbb;
+  line-height: 1.6;
+}
+
+.approach-text strong { color: var(--text); }
+
+.tip-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.tip-list li {
+  font-size: 13px;
+  color: #bbb;
+  padding: 4px 0 4px 16px;
+  position: relative;
+}
+
+.tip-list li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: var(--muted);
+}
+
+/* Quiz select */
+.quiz-select-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.quiz-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 420px) {
+  .quiz-cards { grid-template-columns: 1fr; }
+}
+
+.quiz-card {
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 16px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  background: var(--surface);
+  text-align: left;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.quiz-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.quiz-card.mac::before { background: var(--mac); }
+.quiz-card.acc::before { background: var(--acc); }
+
+.quiz-card:hover, .quiz-card:focus {
+  border-color: var(--border);
+  transform: translateY(-2px);
+}
+
+.quiz-card.mac:hover { border-color: var(--mac); box-shadow: 0 0 20px rgba(201,168,76,0.15); }
+.quiz-card.acc:hover { border-color: var(--acc); box-shadow: 0 0 20px rgba(76,154,76,0.15); }
+
+.card-icon { font-size: 24px; margin-bottom: 8px; }
+
+.card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.quiz-card.mac .card-title { color: var(--mac); }
+.quiz-card.acc .card-title { color: var(--acc); }
+
+.card-meta { font-size: 12px; color: var(--muted); }
+.card-detail { font-size: 12px; color: #aaa; margin-top: 6px; line-height: 1.4; }
+
+/* ---- QUIZ SCREEN ---- */
+#quiz {
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 16px 20px 40px;
+  flex-direction: column;
+}
+
+.quiz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.quiz-back {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  color: var(--muted);
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.quiz-back:hover { border-color: #666; color: var(--text); }
+
+.quiz-title-bar {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex: 1;
+  text-align: center;
+}
+
+.quiz-title-bar.mac { color: var(--mac); }
+.quiz-title-bar.acc { color: var(--acc); }
+
+.quiz-progress-wrap { width: 100%; margin-bottom: 20px; }
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.progress-bar {
+  height: 4px;
+  background: var(--surface2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.mac-fill { background: var(--mac); }
+.acc-fill { background: var(--acc); }
+
+/* Question card */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 20px;
+  margin-bottom: 16px;
+  animation: slideIn 0.25s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.q-type-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.q-theme-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+  margin-left: 8px;
+}
+
+.mac-theme { background: rgba(201,168,76,0.15); color: var(--mac); }
+.acc-theme { background: rgba(76,154,76,0.15); color: var(--acc); }
+
+.q-text {
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.q-quote {
+  font-style: italic;
+  font-size: 15px;
+  color: #ccc;
+  border-left: 3px solid var(--border);
+  padding-left: 12px;
+  margin: 10px 0;
+}
+
+.q-quote.mac-q { border-color: var(--mac); }
+.q-quote.acc-q { border-color: var(--acc); }
+
+/* Answer options */
+.options { display: flex; flex-direction: column; gap: 8px; }
+
+.opt-btn {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 13px 16px;
+  text-align: left;
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.4;
+  width: 100%;
+  position: relative;
+}
+
+.opt-btn:hover:not(:disabled) { border-color: #555; background: #2e2e2e; }
+
+.opt-btn.correct {
+  background: rgba(74, 222, 128, 0.12);
+  border-color: var(--correct);
+  color: var(--correct);
+}
+
+.opt-btn.wrong {
+  background: rgba(248, 113, 113, 0.12);
+  border-color: var(--wrong);
+  color: var(--wrong);
+}
+
+.opt-btn.dimmed { opacity: 0.4; }
+
+/* Fill in blank */
+.fill-wrap { display: flex; flex-direction: column; gap: 10px; }
+
+.fill-input {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 13px 16px;
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  font-size: 15px;
+  width: 100%;
+  transition: border-color 0.15s;
+  outline: none;
+}
+
+.fill-input:focus { border-color: #555; }
+.fill-input.correct { border-color: var(--correct); background: rgba(74,222,128,0.08); color: var(--correct); }
+.fill-input.wrong { border-color: var(--wrong); background: rgba(248,113,113,0.08); color: var(--wrong); }
+
+.submit-btn {
+  padding: 13px 24px;
+  border-radius: 8px;
+  border: none;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.15s;
+  align-self: flex-start;
+}
+
+.submit-btn.mac-btn { background: var(--mac); color: #1a1400; }
+.submit-btn.acc-btn { background: var(--acc); color: #0a1a0a; }
+.submit-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+.submit-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* Feedback box */
+.feedback {
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.55;
+  display: none;
+  animation: slideIn 0.2s ease;
+}
+
+.feedback.correct-fb {
+  display: block;
+  background: rgba(74,222,128,0.1);
+  border: 1px solid rgba(74,222,128,0.3);
+  color: #a7f3c0;
+}
+
+.feedback.wrong-fb {
+  display: block;
+  background: rgba(248,113,113,0.1);
+  border: 1px solid rgba(248,113,113,0.3);
+  color: #fca5a5;
+}
+
+.feedback-head {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.feedback .correct-answer {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 6px;
+  font-style: italic;
+  font-size: 13px;
+}
+
+.next-btn {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 15px;
+  border-radius: 8px;
+  border: none;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: none;
+}
+
+.next-btn.mac-btn { background: var(--mac); color: #1a1400; }
+.next-btn.acc-btn { background: var(--acc); color: #0a1a0a; }
+.next-btn:hover { opacity: 0.88; }
+.next-btn.visible { display: block; animation: slideIn 0.2s ease; }
+
+/* ---- RESULTS SCREEN ---- */
+#results {
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 24px 20px 60px;
+  flex-direction: column;
+}
+
+.result-hero {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.result-score-big {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 80px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.result-score-big.mac { color: var(--mac); }
+.result-score-big.acc { color: var(--acc); }
+
+.result-label {
+  font-size: 13px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.result-message {
+  font-size: 16px;
+  color: #ccc;
+  max-width: 380px;
+  margin: 0 auto 20px;
+  line-height: 1.5;
+}
+
+.result-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.action-btn {
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1.5px solid;
+}
+
+.action-btn.primary.mac { background: var(--mac); color: #1a1400; border-color: var(--mac); }
+.action-btn.primary.acc { background: var(--acc); color: #0a1a0a; border-color: var(--acc); }
+.action-btn.secondary { background: transparent; border-color: var(--border); color: var(--text); }
+.action-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+/* Review list */
+.review-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.review-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.review-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.review-q {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.review-user {
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.review-user.wrong { color: var(--wrong); text-decoration: line-through; }
+.review-user.correct { color: var(--correct); }
+
+.review-correct-ans {
+  font-size: 13px;
+  color: var(--correct);
+  font-style: italic;
+}
+
+/* Misc */
+.spacer { flex: 1; }
+
+@media (max-width: 480px) {
+  .q-text { font-size: 15px; }
+  .opt-btn { font-size: 13px; padding: 12px 14px; }
+  .result-score-big { font-size: 64px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     LANDING SCREEN
+============================================================ -->
+<div id="landing" class="screen active">
+  <div class="logo">GCSE English Lit — Revision App</div>
+
+  <div class="hero-title">
+    <span class="mac">Macbeth</span><br>
+    <span style="color:#555">+</span><br>
+    <span class="acc">Christmas<br>Carol</span>
+  </div>
+  <div class="hero-sub">Miles Warner · Year 11 · Mock tomorrow</div>
+
+  <!-- Attempt counter -->
+  <div class="attempt-strip">
+    <div class="attempt-badge mac-badge">
+      <span>⚔</span>
+      <span class="count" id="mac-count">0</span>
+      <span>Macbeth attempts</span>
+    </div>
+    <div class="attempt-badge acc-badge">
+      <span>🎄</span>
+      <span class="count" id="acc-count">0</span>
+      <span>ACC attempts</span>
+    </div>
+  </div>
+
+  <!-- Approach -->
+  <div class="approach-card">
+    <h2>How to answer every question</h2>
+    <div class="formula">
+      <div class="formula-step">Point</div>
+      <div class="formula-step">Quote</div>
+      <div class="formula-step">Explain</div>
+      <div class="formula-step">Link</div>
+    </div>
+    <p class="approach-text">
+      <strong>Every single answer uses this formula.</strong> Start by directly answering the question (your point). Drop in a short quote. Explain what the specific word or phrase actually means — not just restating it, but analysing what the writer is doing. Then link back to the theme or the exam question.
+    </p>
+    <ul class="tip-list">
+      <li>You don't need every scene — just know the 6 key story beats per text</li>
+      <li>Higher marks come from talking about <strong>context</strong>: Jacobean audiences, Victorian poverty, the author's intentions</li>
+      <li>The word "suggests" is your best friend — it shows analysis, not summary</li>
+      <li>Don't retell the story. Answer the question. One good paragraph beats three weak ones.</li>
+    </ul>
+  </div>
+
+  <!-- Quiz selection -->
+  <div class="quiz-select-title">Pick your quiz</div>
+  <div class="quiz-cards">
+    <button class="quiz-card mac" onclick="startQuiz('macbeth')">
+      <div class="card-icon">⚔</div>
+      <div class="card-title">Macbeth</div>
+      <div class="card-meta">15 questions · 3 types</div>
+      <div class="card-detail">Quotes, themes, characters. Supernatural · Power · Lady Macbeth.</div>
+    </button>
+    <button class="quiz-card acc" onclick="startQuiz('acc')">
+      <div class="card-icon">🎄</div>
+      <div class="card-title">A Christmas Carol</div>
+      <div class="card-meta">15 questions · 3 types</div>
+      <div class="card-detail">Quotes, themes, characters. Supernatural · Poverty · Redemption.</div>
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================
+     QUIZ SCREEN
+============================================================ -->
+<div id="quiz" class="screen">
+  <div class="quiz-header">
+    <button class="quiz-back" onclick="goHome()">← Back</button>
+    <div class="quiz-title-bar" id="quiz-title">Macbeth</div>
+    <div style="width:60px"></div>
+  </div>
+
+  <div class="quiz-progress-wrap">
+    <div class="progress-info">
+      <span id="q-counter">Question 1 of 15</span>
+      <span id="q-score-live">Score: 0</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="q-card" id="q-card">
+    <div id="q-meta"></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="q-quote" id="q-quote" style="display:none"></div>
+    <div id="q-body"></div>
+  </div>
+
+  <div class="feedback" id="feedback">
+    <div class="feedback-head" id="fb-head"></div>
+    <div id="fb-body"></div>
+    <div class="correct-answer" id="fb-answer" style="display:none"></div>
+  </div>
+
+  <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+</div>
+
+<!-- ============================================================
+     RESULTS SCREEN
+============================================================ -->
+<div id="results" class="screen">
+  <div class="result-hero">
+    <div class="result-score-big" id="result-score">12/15</div>
+    <div class="result-label">Questions correct</div>
+    <div class="result-message" id="result-message"></div>
+    <div class="result-actions">
+      <button class="action-btn primary" id="retry-btn" onclick="retryQuiz()">Try Again</button>
+      <button class="action-btn secondary" onclick="goHome()">← Choose Quiz</button>
+    </div>
+  </div>
+
+  <div class="review-title">Full review — every question</div>
+  <div id="review-list"></div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+
+const QUIZZES = {
+
+macbeth: {
+  title: "Macbeth",
+  color: "mac",
+  questions: [
+
+    // --- MULTIPLE CHOICE ---
+    {
+      type: "mc",
+      theme: "Supernatural",
+      question: "What do the witches' opening words 'Fair is foul, and foul is fair' establish about the world of the play?",
+      options: [
+        "That the weather will be stormy throughout",
+        "That moral order is inverted — good and evil are reversed",
+        "That the witches are friendly and helpful characters",
+        "That Scotland is a pleasant, peaceful kingdom"
+      ],
+      correct: 1,
+      explanation: "This oxymoron establishes from line one that reality in this play is corrupted. Nothing can be trusted — what appears good is evil, what appears evil may be good. It's the key theme of the entire play.",
+    },
+    {
+      type: "mc",
+      theme: "Power",
+      question: "In his soliloquy before killing Duncan, Macbeth admits his only reason for the murder is:",
+      options: [
+        "Fear of what the witches will do if he doesn't act",
+        "Lady Macbeth has threatened to leave him",
+        "'Vaulting ambition' — he has no other justification",
+        "Duncan has treated him unfairly in battle"
+      ],
+      correct: 2,
+      explanation: "'Vaulting ambition, which o'erleaps itself' — Macbeth knows this himself. He has no moral case for the murder. His self-awareness here makes him a tragic hero: he sees his own flaw and does it anyway.",
+    },
+    {
+      type: "mc",
+      theme: "Lady Macbeth",
+      question: "When Lady Macbeth says 'Unsex me here', what is she asking for?",
+      options: [
+        "She wants to become physically stronger",
+        "She wants evil spirits to remove her femininity so she can commit murder without guilt or remorse",
+        "She is asking Macbeth to respect her more",
+        "She wants to disguise herself as a man"
+      ],
+      correct: 1,
+      explanation: "She's invoking supernatural evil to strip her of the qualities Jacobeans associated with women — compassion, remorse, nurturing. She knows that as a woman in this society, she lacks the 'permission' to do evil. She must be transformed.",
+    },
+    {
+      type: "mc",
+      theme: "Supernatural",
+      question: "What does the witches' prophecy 'None of woman born shall harm Macbeth' actually mean?",
+      options: [
+        "Macbeth is completely safe from all enemies",
+        "Only children can harm Macbeth",
+        "Macduff, born by caesarean section, is the exception — the prophecy is a deliberate trap",
+        "The prophecy is simply false — the witches are lying"
+      ],
+      correct: 2,
+      explanation: "The witches don't lie — they mislead. Technically true but designed to create a fatal false security. Macbeth hears what he wants to hear. The language itself becomes a weapon.",
+    },
+    {
+      type: "mc",
+      theme: "Power",
+      question: "By Act 5, Macbeth states 'the firstlings of my heart shall be the firstlings of my hand.' What does this reveal about his kingship?",
+      options: [
+        "He has become more cautious and reflective",
+        "He now acts impulsively without moral reflection — the opposite of good kingship",
+        "He has finally become the king he always wanted to be",
+        "He is showing genuine courage in battle"
+      ],
+      correct: 1,
+      explanation: "Good Jacobean kingship required deep reflection. Macbeth is now the opposite — acting on impulse, without thought. This is why he orders the murder of Macduff's innocent family. He has become a tyrant.",
+    },
+    {
+      type: "mc",
+      theme: "Lady Macbeth",
+      question: "What does 'Out, damned spot! Out, I say!' reveal about Lady Macbeth's psychological state?",
+      options: [
+        "She has literally got blood on her hands from helping kill Duncan",
+        "She is angry about housekeeping",
+        "Guilt has broken her mind — the blood she imagines cannot be washed away by will or reason",
+        "She is performing a spell to communicate with the witches"
+      ],
+      correct: 2,
+      explanation: "The guilt she suppressed so effectively in Acts 1–2 has erupted in sleep when her conscious mind can't control it. She imagined washing hands as easy — 'a little water clears us of this deed.' She was catastrophically wrong.",
+    },
+
+    // --- QUOTE MATCH ---
+    {
+      type: "mc",
+      theme: "Supernatural",
+      question: "Which quote shows Macbeth hallucinating before the murder of Duncan?",
+      quote: "He speaks just before committing the deed, alone on stage.",
+      options: [
+        '"Fair is foul, and foul is fair"',
+        '"Something wicked this way comes"',
+        '"Is this a dagger which I see before me?"',
+        '"Upon my head they placed a fruitless crown"'
+      ],
+      correct: 2,
+      explanation: "This hallucination shows the supernatural is now inside Macbeth's mind — guilt and ambition blur reality. He cannot trust his own senses. This is Shakespeare showing how the supernatural corrupts from within.",
+    },
+    {
+      type: "mc",
+      theme: "Power",
+      question: "Which quote best shows that Macbeth's power brings him no peace or security?",
+      options: [
+        '"Stars, hide your fires"',
+        '"To be thus is nothing; but to be safely thus"',
+        '"Vaulting ambition, which o\'erleaps itself"',
+        '"Upon my head they placed a fruitless crown"'
+      ],
+      correct: 1,
+      explanation: "'To be thus is nothing; but to be safely thus' — once king, Macbeth is still terrified. Shakespeare shows that power gained through evil creates only paranoia, not satisfaction. More power = more fear.",
+    },
+    {
+      type: "mc",
+      theme: "Lady Macbeth",
+      question: "How does Lady Macbeth manipulate Macbeth into going through with the murder when he hesitates?",
+      options: [
+        "She reminds him of the witches' prophecy",
+        "She offers to do the murder herself",
+        "She attacks his masculinity — 'When you durst do it, then you were a man'",
+        "She tells him Duncan deserves to die for being a bad king"
+      ],
+      correct: 2,
+      explanation: "She uses his insecurity about his own manhood as a weapon. This is psychological manipulation — she doesn't force him physically, she exploits his desire to prove himself. This is why she's such a complex and powerful character.",
+    },
+
+    // --- FILL IN THE BLANK ---
+    {
+      type: "fill",
+      theme: "Power",
+      question: "Complete Macbeth's quote about his ambition.",
+      quote: '"___________ ambition, which o\'erleaps itself"',
+      correctAnswers: ["vaulting", "Vaulting"],
+      displayAnswer: "Vaulting",
+      explanation: "'Vaulting' — like a horse jumping too high and falling. Macbeth's ambition overreaches, and the fall destroys him. This is his tragic flaw, and he names it himself.",
+    },
+    {
+      type: "fill",
+      theme: "Supernatural",
+      question: "Complete the witches' most famous opening line.",
+      quote: '"Fair is foul, and ___________ is fair"',
+      correctAnswers: ["foul", "Foul"],
+      displayAnswer: "foul",
+      explanation: "This oxymoron is the heartbeat of the play. Reality is inverted. Good and evil cannot be distinguished. Everything that follows — the deception, the betrayal, the corruption — stems from this opening statement.",
+    },
+    {
+      type: "fill",
+      theme: "Lady Macbeth",
+      question: "Complete Lady Macbeth's sleepwalking line.",
+      quote: '"Out, ___________ spot! Out, I say!"',
+      correctAnswers: ["damned", "Damned"],
+      displayAnswer: "damned",
+      explanation: "'Damned' has religious weight — she is damned, cursed. The blood represents guilt that cannot be removed by willpower or rationality. Guilt has destroyed her mind from within.",
+    },
+
+    // --- CONTEXT / HIGHER ORDER ---
+    {
+      type: "mc",
+      theme: "Context",
+      question: "Why would a Jacobean audience have found the murder of Duncan especially horrifying?",
+      options: [
+        "Duncan was a popular character and audiences liked him",
+        "Violence was unusual in Jacobean theatre",
+        "They believed in the Divine Right of Kings — killing a king was a sin against God himself",
+        "Jacobeans believed in ghosts and would have feared Banquo's return"
+      ],
+      correct: 2,
+      explanation: "The Divine Right of Kings meant the monarch was chosen by God. Killing Duncan wasn't just murder — it was a cosmic act of rebellion against the natural order. This is why nature goes berserk: storms, eclipses, horses eating each other.",
+    },
+    {
+      type: "mc",
+      theme: "Context",
+      question: "Shakespeare wrote Macbeth for King James I. What does the play's treatment of witchcraft tell us about this context?",
+      options: [
+        "Shakespeare thought witchcraft was harmless and made it up for entertainment",
+        "James I had written a book on demonology and took witchcraft seriously — Shakespeare was engaging with a topic the king found genuinely important",
+        "Witches were not taken seriously by educated people in Jacobean times",
+        "The witches represent Shakespeare's personal religious beliefs"
+      ],
+      correct: 1,
+      explanation: "James I wrote 'Daemonologie' about witchcraft. By featuring witches prominently, Shakespeare was directly engaging with his patron's obsessions. The play also reinforced the Divine Right of Kings — important to James who feared assassination plots.",
+    },
+    {
+      type: "mc",
+      theme: "Structure",
+      question: "Macbeth is described as a tragic hero. What does this mean in terms of his dramatic arc?",
+      options: [
+        "He is always evil but pretends to be good",
+        "He starts as a noble hero, is corrupted by a fatal flaw (ambition), falls from grace, and dies",
+        "He is a victim of circumstance who never makes his own choices",
+        "He becomes good again at the end of the play"
+      ],
+      correct: 1,
+      explanation: "Tragic structure: noble hero → fatal flaw exposed → corruption → catastrophic fall → death. Macbeth starts as 'brave Macbeth' (a loyal, celebrated warrior) and ends as 'this dead butcher'. The tragedy is that he sees his own flaw and still falls.",
+    },
+  ]
+},
+
+acc: {
+  title: "A Christmas Carol",
+  color: "acc",
+  questions: [
+
+    // --- MULTIPLE CHOICE ---
+    {
+      type: "mc",
+      theme: "Poverty",
+      question: "When Scrooge says 'If they would rather die, they had better do it and decrease the surplus population', what is Dickens doing?",
+      options: [
+        "Showing that Scrooge is correct about overpopulation",
+        "Presenting the actual attitude of wealthy Victorians to expose how morally bankrupt it is",
+        "Suggesting that Scrooge is simply ignorant and means no harm",
+        "Praising the workhouse system as an effective solution"
+      ],
+      correct: 1,
+      explanation: "This was a real attitude held by wealthy Victorians influenced by Malthusian economic theory. Dickens is putting it in Scrooge's mouth to make readers recognise — and be appalled by — attitudes they may have shared. The Ghost quotes this back to Scrooge in Stave 3.",
+    },
+    {
+      type: "mc",
+      theme: "Redemption",
+      question: "What does Marley mean when he says 'I wear the chain I forged in life'?",
+      options: [
+        "He is literally imprisoned by heavy iron chains",
+        "His greed and selfishness in life have become a physical punishment in death — a symbolic chain of his sins",
+        "He is warning Scrooge about a specific danger coming",
+        "He regrets becoming a businessman"
+      ],
+      correct: 1,
+      explanation: "This is allegory. The chain made of 'cash-boxes, keys, padlocks, ledgers' represents every selfish act Marley committed. It's Dickens's argument that greed imprisons you — even in death. It also shows what Scrooge's future looks like if he doesn't change.",
+    },
+    {
+      type: "mc",
+      theme: "Supernatural",
+      question: "Why does Dickens present Ignorance and Want as children beneath the Ghost of Christmas Present's robe?",
+      options: [
+        "To make the ghost seem more frightening and dramatic",
+        "To show that children are naturally ignorant and wanting",
+        "To give abstract social problems a human, sympathetic face — the people most destroyed by them are children",
+        "To suggest that Christmas is only for children"
+      ],
+      correct: 2,
+      explanation: "Anthropomorphism — making abstract concepts human. Dickens chose children specifically because they are the most vulnerable victims of poverty and ignorance. The Ghost warns: 'Beware them both, but most of all beware this boy' (Ignorance) — because a society that ignores poverty creates the conditions for its own destruction.",
+    },
+    {
+      type: "mc",
+      theme: "Poverty",
+      question: "The Cratchit family is presented as poor but joyful. What is Dickens arguing through this contrast with Scrooge?",
+      options: [
+        "That poverty is not really a problem if you have a good attitude",
+        "That wealth does not produce happiness — love, community and generosity matter more",
+        "That the Cratchits are naive and don't understand their own suffering",
+        "That poor people should be satisfied with their lot in life"
+      ],
+      correct: 1,
+      explanation: "Dickens deliberately inverts the Victorian assumption that wealth = virtue = happiness. Scrooge has everything and feels nothing. The Cratchits have almost nothing and celebrate fiercely. This is a direct attack on the 'lazy poor' myth and on Scrooge's worldview.",
+    },
+    {
+      type: "mc",
+      theme: "Redemption",
+      question: "Why is the Ghost of Christmas Yet to Come silent throughout Stave 4?",
+      options: [
+        "Dickens forgot to write dialogue for it",
+        "It represents death, which is beyond language — silence is more terrifying than any words",
+        "It can only communicate through visions, not speech",
+        "Scrooge talks too much for it to get a word in"
+      ],
+      correct: 1,
+      explanation: "The ghost 'slowly, gravely, silently approached.' Three adverbs. The silence represents the finality of death — there's nothing left to say. It forces Scrooge to confront his legacy without the comfort of explanation or justification.",
+    },
+    {
+      type: "mc",
+      theme: "Context",
+      question: "Why did Dickens write A Christmas Carol as a story rather than a political pamphlet (which he'd originally planned)?",
+      options: [
+        "His publisher refused to print a pamphlet",
+        "Stories were cheaper to produce than pamphlets",
+        "Emotion changes minds that facts cannot reach — a story about Tiny Tim moves people more than statistics about child poverty",
+        "He didn't know enough about politics to write a pamphlet"
+      ],
+      correct: 2,
+      explanation: "Dickens understood that people protect themselves from uncomfortable facts but open their hearts to stories. A tale about a dying child and a redeemed miser reaches feelings that a political argument about the Poor Law cannot. This is why the novella had genuine social impact.",
+    },
+
+    // --- QUOTE MATCH ---
+    {
+      type: "mc",
+      theme: "Poverty",
+      question: "Which string of adjectives best describes how Dickens presents Scrooge's greed in Stave 1?",
+      options: [
+        '"Cold, hard, miserly, bitter, old"',
+        '"Squeezing, wrenching, grasping, scraping, clutching, covetous old sinner"',
+        '"Solitary as an oyster, secretive and self-contained"',
+        '"Hard and sharp as flint, from which no steel had ever struck generous fire"'
+      ],
+      correct: 1,
+      explanation: "Six adjectives in a row — the accumulation mirrors the accumulation of wealth. All taking, no giving. The physical violence of the verbs (squeezing, wrenching, grasping) makes his greed feel aggressive, not just passive.",
+    },
+    {
+      type: "mc",
+      theme: "Redemption",
+      question: "Which quote marks the emotional turning point of Scrooge's redemption in Stave 3?",
+      options: [
+        '"I wear the chain I forged in life"',
+        '"Marley was dead, to begin with"',
+        '"Scrooge hung his head to hear his own words quoted by the Spirit, and was overcome with penitence and grief"',
+        '"His own heart laughed"'
+      ],
+      correct: 2,
+      explanation: "This is the hinge moment. His own cruel words ('decrease the surplus population') are thrown back when Tiny Tim's fate is discussed. He cannot escape his own cruelty when faced with its human consequence. Self-awareness begins redemption.",
+    },
+    {
+      type: "mc",
+      theme: "Redemption",
+      question: "At the end of the novella, Scrooge is described as 'light as a feather… happy as an angel… merry as a schoolboy.' What technique is Dickens using?",
+      options: [
+        "Metaphor — comparing Scrooge to supernatural beings",
+        "Three similes to show the physical and emotional liberation that generosity brings",
+        "Hyperbole to exaggerate Scrooge's good mood for comic effect",
+        "Alliteration to create a musical, celebratory sound"
+      ],
+      correct: 1,
+      explanation: "Three similes in rapid succession — the speed and lightness of the language mirrors how Scrooge feels. The contrast with the cold, dense description of Scrooge in Stave 1 is total. Dickens is showing that redemption is not just moral but physical — the whole self is freed.",
+    },
+
+    // --- FILL IN THE BLANK ---
+    {
+      type: "fill",
+      theme: "Redemption",
+      question: "Complete Marley's warning to Scrooge.",
+      quote: '"I wear the chain I ___________ in life"',
+      correctAnswers: ["forged", "Forged"],
+      displayAnswer: "forged",
+      explanation: "'Forged' — he made it himself, link by link. Every selfish choice was a choice. This emphasises that Scrooge still has agency — he can avoid Marley's fate, but only through active change.",
+    },
+    {
+      type: "fill",
+      theme: "Poverty",
+      question: "Complete Scrooge's cold description of himself at the very start.",
+      quote: '"secret, and self-contained, and ___________ as an oyster"',
+      correctAnswers: ["solitary", "Solitary"],
+      displayAnswer: "solitary",
+      explanation: "'Solitary as an oyster' — oysters are sealed shut, reclusive, hard on the outside but with something valuable inside. This suggests Scrooge is not beyond redemption — there's a person in there. But he has sealed himself off entirely from human connection.",
+    },
+    {
+      type: "fill",
+      theme: "Supernatural",
+      question: "Complete what the Ghost of Christmas Present warns about.",
+      quote: '"Beware them both… but most of all beware this boy" — his name is ___________',
+      correctAnswers: ["ignorance", "Ignorance"],
+      displayAnswer: "Ignorance",
+      explanation: "Ignorance is the greater danger because a society that refuses to see or acknowledge poverty creates the very conditions for its own destruction. Want is the symptom — Ignorance is the cause.",
+    },
+
+    // --- CONTEXT / HIGHER ORDER ---
+    {
+      type: "mc",
+      theme: "Context",
+      question: "What was the 'New Poor Law' of 1834, and why does it matter for understanding the novella?",
+      options: [
+        "A law that gave poor people money — Dickens approved of it",
+        "A law that sent unemployed people to harsh workhouses as the only form of support — Dickens opposed it his whole life",
+        "A law that banned child labour in factories",
+        "A law that created the first public schools for poor children"
+      ],
+      correct: 1,
+      explanation: "The Poor Law Amendment Act of 1834 forced anyone needing support into workhouses — deliberately harsh to 'discourage laziness.' Dickens had worked in a factory as a child and knew poverty wasn't a moral failure. Scrooge's attitude ('send them to the workhouses') directly reflects this law.",
+    },
+    {
+      type: "mc",
+      theme: "Structure",
+      question: "Why does Dickens call the chapters 'Staves' instead of chapters?",
+      options: [
+        "It was a common Victorian publishing convention",
+        "A stave is a verse in a carol — the title 'A Christmas Carol' is literal. The novella is structured like a song, with five verses.",
+        "Dickens wanted to make the book seem longer than it was",
+        "He borrowed the term from Shakespeare's use of 'acts'"
+      ],
+      correct: 1,
+      explanation: "The title is completely literal. A carol = a Christmas song. A stave = a verse of a carol. The novella has a musical, rhythmic structure — moving from darkness to light, from Scrooge's cold isolation to joyful community. This is a deliberate artistic choice.",
+    },
+    {
+      type: "mc",
+      theme: "Poverty",
+      question: "Tiny Tim's famous phrase is 'God bless us, every one!' Why is this significant given the themes of the novella?",
+      options: [
+        "It shows that religious belief makes poverty tolerable",
+        "It ironically emphasises that God has not blessed people equally — Tiny Tim will die unless the wealthy choose to act generously",
+        "Dickens is showing that poor children are naturally more religious than rich ones",
+        "It suggests Tiny Tim has fully accepted his fate and is at peace"
+      ],
+      correct: 1,
+      explanation: "The phrase is simultaneously moving and damning. God blessing 'every one' is not the reality — Tiny Tim is dying because Scrooge pays his father poverty wages. Divine blessing has been replaced by economic injustice. The phrase puts the moral burden back on the wealthy reader.",
+    },
+  ]
+}
+
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let currentQuiz = null;
+let questions = [];
+let qIndex = 0;
+let score = 0;
+let answered = false;
+let userAnswers = [];
+
+// ============================================================
+// LOCALSTORAGE COUNTERS
+// ============================================================
+function getCounts() {
+  try {
+    return JSON.parse(localStorage.getItem('gcse_counts') || '{"macbeth":0,"acc":0}');
+  } catch(e) { return {macbeth:0, acc:0}; }
+}
+
+function incrementCount(quiz) {
+  const c = getCounts();
+  c[quiz] = (c[quiz] || 0) + 1;
+  try { localStorage.setItem('gcse_counts', JSON.stringify(c)); } catch(e){}
+  return c;
+}
+
+function updateCountDisplay() {
+  const c = getCounts();
+  document.getElementById('mac-count').textContent = c.macbeth || 0;
+  document.getElementById('acc-count').textContent = c.acc || 0;
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function goHome() {
+  updateCountDisplay();
+  showScreen('landing');
+}
+
+// ============================================================
+// QUIZ LOGIC
+// ============================================================
+function startQuiz(quizKey) {
+  currentQuiz = QUIZZES[quizKey];
+  questions = shuffle([...currentQuiz.questions]);
+  qIndex = 0;
+  score = 0;
+  userAnswers = [];
+  answered = false;
+
+  // Increment counter
+  incrementCount(quizKey);
+
+  // Setup UI
+  const color = currentQuiz.color;
+  document.getElementById('quiz-title').textContent = currentQuiz.title;
+  document.getElementById('quiz-title').className = `quiz-title-bar ${color}`;
+  document.getElementById('progress-fill').className = `progress-fill ${color}-fill`;
+
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function renderQuestion() {
+  answered = false;
+  const q = questions[qIndex];
+  const color = currentQuiz.color;
+  const total = questions.length;
+
+  // Progress
+  document.getElementById('q-counter').textContent = `Question ${qIndex + 1} of ${total}`;
+  document.getElementById('q-score-live').textContent = `Score: ${score}`;
+  document.getElementById('progress-fill').style.width = `${(qIndex / total) * 100}%`;
+
+  // Meta badges
+  document.getElementById('q-meta').innerHTML =
+    `<span class="q-type-badge">${q.type === 'mc' ? 'Multiple choice' : 'Fill in the blank'}</span>` +
+    `<span class="q-theme-badge ${color}-theme">${q.theme}</span>`;
+
+  // Question text
+  document.getElementById('q-text').textContent = q.question;
+
+  // Quote (if any)
+  const quoteEl = document.getElementById('q-quote');
+  if (q.quote) {
+    quoteEl.textContent = q.quote;
+    quoteEl.className = `q-quote ${color}-q`;
+    quoteEl.style.display = 'block';
+  } else {
+    quoteEl.style.display = 'none';
+  }
+
+  // Body (options or fill)
+  const body = document.getElementById('q-body');
+  if (q.type === 'mc') {
+    // Shuffle options but remember correct answer text
+    const correctText = q.options[q.correct];
+    const shuffled = shuffle([...q.options]);
+    const newCorrectIndex = shuffled.indexOf(correctText);
+
+    body.innerHTML = `<div class="options">` +
+      shuffled.map((opt, i) =>
+        `<button class="opt-btn" onclick="answerMC(this, ${i}, ${newCorrectIndex})">${opt}</button>`
+      ).join('') +
+      `</div>`;
+
+    // Store correct text for review
+    q._correctText = correctText;
+    q._shuffledOptions = shuffled;
+    q._shuffledCorrect = newCorrectIndex;
+
+  } else {
+    body.innerHTML = `
+      <div class="fill-wrap">
+        <input type="text" class="fill-input" id="fill-input" placeholder="Type your answer…"
+          onkeydown="if(event.key==='Enter')submitFill()"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <button class="submit-btn ${color}-btn" onclick="submitFill()">Check Answer</button>
+      </div>`;
+    setTimeout(() => {
+      const inp = document.getElementById('fill-input');
+      if(inp) inp.focus();
+    }, 100);
+  }
+
+  // Hide feedback & next
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.style.display = 'none';
+
+  const nb = document.getElementById('next-btn');
+  nb.className = `next-btn ${color}-btn`;
+  nb.classList.remove('visible');
+  nb.textContent = qIndex < questions.length - 1 ? 'Next Question →' : 'See Results →';
+}
+
+function answerMC(btn, selectedIdx, correctIdx) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[qIndex];
+  const isCorrect = selectedIdx === correctIdx;
+  const opts = document.querySelectorAll('.opt-btn');
+
+  opts.forEach((b, i) => {
+    b.disabled = true;
+    if (i === correctIdx) b.classList.add('correct');
+    else if (i === selectedIdx && !isCorrect) b.classList.add('wrong');
+    else b.classList.add('dimmed');
+  });
+
+  const selectedText = q._shuffledOptions[selectedIdx];
+  const correctText = q._shuffledOptions[correctIdx];
+
+  if (isCorrect) score++;
+
+  userAnswers.push({
+    question: q.question,
+    userAnswer: selectedText,
+    correctAnswer: correctText,
+    isCorrect,
+    explanation: q.explanation
+  });
+
+  showFeedback(isCorrect, q.explanation, isCorrect ? null : `Correct answer: ${correctText}`);
+}
+
+function submitFill() {
+  if (answered) return;
+  const input = document.getElementById('fill-input');
+  if (!input || !input.value.trim()) return;
+  answered = true;
+
+  const q = questions[qIndex];
+  const userVal = input.value.trim();
+  const isCorrect = q.correctAnswers.some(a => a.toLowerCase() === userVal.toLowerCase());
+
+  input.disabled = true;
+  input.classList.add(isCorrect ? 'correct' : 'wrong');
+
+  if (isCorrect) score++;
+
+  userAnswers.push({
+    question: q.question,
+    userAnswer: userVal,
+    correctAnswer: q.displayAnswer,
+    isCorrect,
+    explanation: q.explanation
+  });
+
+  showFeedback(isCorrect, q.explanation, isCorrect ? null : `The missing word was: "${q.displayAnswer}"`);
+}
+
+function showFeedback(isCorrect, explanation, correctAns) {
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'block';
+  fb.className = `feedback ${isCorrect ? 'correct-fb' : 'wrong-fb'}`;
+
+  document.getElementById('fb-head').textContent = isCorrect ? '✓ Correct!' : '✗ Not quite';
+
+  document.getElementById('fb-body').textContent = explanation;
+
+  const ansEl = document.getElementById('fb-answer');
+  if (correctAns) {
+    ansEl.textContent = correctAns;
+    ansEl.style.display = 'block';
+  } else {
+    ansEl.style.display = 'none';
+  }
+
+  document.getElementById('next-btn').classList.add('visible');
+}
+
+function nextQuestion() {
+  qIndex++;
+  if (qIndex >= questions.length) {
+    showResults();
+  } else {
+    renderQuestion();
+    window.scrollTo(0, 0);
+  }
+}
+
+// ============================================================
+// RESULTS
+// ============================================================
+function showResults() {
+  const total = questions.length;
+  const color = currentQuiz.color;
+  const pct = Math.round((score / total) * 100);
+
+  document.getElementById('result-score').textContent = `${score}/${total}`;
+  document.getElementById('result-score').className = `result-score-big ${color}`;
+
+  let msg = '';
+  if (pct >= 90) msg = "Brilliant. You know this cold. Go get some sleep.";
+  else if (pct >= 70) msg = "Solid. A few gaps — check the ones you got wrong and you're golden.";
+  else if (pct >= 50) msg = "Getting there. Go back over the explanations, then try again.";
+  else msg = "Don't panic — that's what this is for. Read the explanations, then run it again.";
+
+  document.getElementById('result-message').textContent = msg;
+
+  const retryBtn = document.getElementById('retry-btn');
+  retryBtn.className = `action-btn primary ${color}`;
+
+  // Build review
+  const list = document.getElementById('review-list');
+  list.innerHTML = userAnswers.map((a, i) => `
+    <div class="review-item">
+      <div class="review-icon">${a.isCorrect ? '✅' : '❌'}</div>
+      <div style="flex:1">
+        <div class="review-q">${i + 1}. ${a.question}</div>
+        <div class="review-user ${a.isCorrect ? 'correct' : 'wrong'}">You answered: ${a.userAnswer}</div>
+        ${!a.isCorrect ? `<div class="review-correct-ans">✓ ${a.correctAnswer}</div>` : ''}
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;line-height:1.4;">${a.explanation}</div>
+      </div>
+    </div>
+  `).join('');
+
+  showScreen('results');
+}
+
+function retryQuiz() {
+  const key = Object.keys(QUIZZES).find(k => QUIZZES[k] === currentQuiz);
+  startQuiz(key);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+updateCountDisplay();
+</script>
+</body>
+</html>
