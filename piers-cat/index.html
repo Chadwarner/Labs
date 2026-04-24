@@ -1,0 +1,130 @@
+
+<style>
+  .calc-wrap { padding: 1.5rem 0; display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .cat-display { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.5rem; width: 280px; min-height: 70px; text-align: right; margin-bottom: 4px; }
+  .cat-display .expression { font-size: 13px; color: var(--color-text-secondary); min-height: 18px; }
+  .cat-display .current { font-size: 32px; font-weight: 500; color: var(--color-text-primary); font-family: Georgia, serif; word-break: break-all; }
+  .cat-msg { font-size: 13px; color: var(--color-text-secondary); height: 20px; margin-bottom: 8px; font-style: italic; }
+  .cat-grid { display: grid; grid-template-columns: repeat(4, 68px); gap: 6px; }
+  .btn { width: 68px; height: 64px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); font-size: 15px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; transition: background 0.1s; user-select: none; }
+  .btn:hover { background: var(--color-background-secondary); }
+  .btn:active { transform: scale(0.96); }
+  .btn .cat { font-size: 22px; line-height: 1; }
+  .btn .label { font-size: 10px; color: var(--color-text-secondary); }
+  .btn.op { background: var(--color-background-secondary); }
+  .btn.op:hover { background: var(--color-background-tertiary); }
+  .btn.eq { background: #C96442; border-color: #C96442; color: #fff; }
+  .btn.eq:hover { background: #A8472A; }
+  .btn.eq .label { color: rgba(255,255,255,0.75); }
+  .btn.clear { color: #C96442; border-color: #C96442; }
+  .btn.wide { grid-column: span 2; width: 100%; }
+</style>
+
+<div class="calc-wrap">
+  <h2 class="sr-only">Cat calculator — a fully functional calculator with cat-themed buttons</h2>
+  <div class="cat-display">
+    <div class="expression" id="expr"></div>
+    <div class="current" id="display">0</div>
+  </div>
+  <div class="cat-msg" id="msg">meow.</div>
+
+  <div class="cat-grid">
+    <button class="btn clear" onclick="cc('AC')"><span class="cat">😾</span><span class="label">AC</span></button>
+    <button class="btn op" onclick="cc('±')"><span class="cat">🙀</span><span class="label">±</span></button>
+    <button class="btn op" onclick="cc('%')"><span class="cat">😹</span><span class="label">%</span></button>
+    <button class="btn op" onclick="cc('/')"><span class="cat">🐈</span><span class="label">÷</span></button>
+
+    <button class="btn" onclick="cc('7')"><span class="cat">🐾</span><span class="label">7</span></button>
+    <button class="btn" onclick="cc('8')"><span class="cat">🐱</span><span class="label">8</span></button>
+    <button class="btn" onclick="cc('9')"><span class="cat">😸</span><span class="label">9</span></button>
+    <button class="btn op" onclick="cc('*')"><span class="cat">😺</span><span class="label">×</span></button>
+
+    <button class="btn" onclick="cc('4')"><span class="cat">🙈</span><span class="label">4</span></button>
+    <button class="btn" onclick="cc('5')"><span class="cat">😻</span><span class="label">5</span></button>
+    <button class="btn" onclick="cc('6')"><span class="cat">🐈‍⬛</span><span class="label">6</span></button>
+    <button class="btn op" onclick="cc('-')"><span class="cat">😼</span><span class="label">−</span></button>
+
+    <button class="btn" onclick="cc('1')"><span class="cat">🐟</span><span class="label">1</span></button>
+    <button class="btn" onclick="cc('2')"><span class="cat">🧶</span><span class="label">2</span></button>
+    <button class="btn" onclick="cc('3')"><span class="cat">😿</span><span class="label">3</span></button>
+    <button class="btn op" onclick="cc('+')"><span class="cat">😽</span><span class="label">+</span></button>
+
+    <button class="btn wide" onclick="cc('0')"><span class="cat">😴</span><span class="label">0 (nap)</span></button>
+    <button class="btn" onclick="cc('.')"><span class="cat">🐭</span><span class="label">.</span></button>
+    <button class="btn eq" onclick="cc('=')"><span class="cat">🎉</span><span class="label">=</span></button>
+  </div>
+</div>
+
+<script>
+const msgs = {
+  '+': ['adding fish...', 'paws together', 'more treats pls'],
+  '-': ['knocking that off', 'less is more (fur)', 'batted away'],
+  '*': ['multiplying naps', 'many many kittens', 'exponential floof'],
+  '/': ['dividing the territory', 'sharing? unlikely', 'splitting hairballs'],
+  '=': ['*stares at result*', 'mrow.', 'purring at answer', 'acceptable.', 'done. now feed me.'],
+  'AC': ['reset. like knocking a vase off', 'clean slate. or counter.'],
+  default: ['*taps screen*', 'calculating...', '*slow blink*', 'this is fine.']
+};
+
+function rndMsg(key) {
+  const arr = msgs[key] || msgs.default;
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+let state = { display: '0', expr: '', op: null, prev: null, fresh: true };
+
+function update() {
+  document.getElementById('display').textContent = state.display;
+  document.getElementById('expr').textContent = state.expr;
+}
+
+function cc(k) {
+  const s = state;
+  if (k === 'AC') {
+    state = { display: '0', expr: '', op: null, prev: null, fresh: true };
+    document.getElementById('msg').textContent = rndMsg('AC');
+    update(); return;
+  }
+  if (k === '±') {
+    s.display = String(parseFloat(s.display) * -1);
+    update(); return;
+  }
+  if (k === '%') {
+    s.display = String(parseFloat(s.display) / 100);
+    update(); return;
+  }
+  if (['+','-','*','/'].includes(k)) {
+    s.prev = parseFloat(s.display);
+    s.op = k;
+    s.expr = s.display + ' ' + ({'+':'+','-':'−','*':'×','/':'÷'}[k]);
+    s.fresh = true;
+    document.getElementById('msg').textContent = rndMsg(k);
+    update(); return;
+  }
+  if (k === '=') {
+    if (s.op && s.prev !== null) {
+      const cur = parseFloat(s.display);
+      let res;
+      if (s.op === '+') res = s.prev + cur;
+      if (s.op === '-') res = s.prev - cur;
+      if (s.op === '*') res = s.prev * cur;
+      if (s.op === '/') res = s.prev / cur;
+      const formatted = parseFloat(res.toPrecision(12));
+      s.expr = s.expr + ' ' + s.display + ' =';
+      s.display = String(formatted);
+      s.op = null; s.prev = null; s.fresh = true;
+      document.getElementById('msg').textContent = rndMsg('=');
+    }
+    update(); return;
+  }
+  if (k === '.') {
+    if (s.fresh) { s.display = '0.'; s.fresh = false; }
+    else if (!s.display.includes('.')) s.display += '.';
+    update(); return;
+  }
+  // digit
+  if (s.fresh) { s.display = k; s.fresh = false; }
+  else s.display = s.display === '0' ? k : s.display + k;
+  update();
+}
+</script>
